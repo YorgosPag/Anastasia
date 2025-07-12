@@ -22,7 +22,7 @@ export default function Home() {
         "bg-card rounded-xl shadow-md border",
         selectedContactId ? "hidden md:flex flex-col" : "flex flex-col"
       )}>
-         <div className="overflow-y-auto space-y-3 max-h-full p-4">
+         <div className="overflow-y-auto space-y-3 max-h-full">
             <ContactList
                 contacts={contacts}
                 selectedContactId={selectedContactId}
