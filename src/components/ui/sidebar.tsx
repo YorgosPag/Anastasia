@@ -175,8 +175,10 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { isMobile, openMobile, setOpenMobile } = useSidebar()
     const isClientMobile = useIsMobile();
+    const { state } = useSidebar()
+
 
     if (collapsible === "none") {
       return (
@@ -199,7 +201,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:top-2 [&>button]:right-2 [&>button]:text-sidebar-foreground rounded-r-xl shadow-lg z-[9999]"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,

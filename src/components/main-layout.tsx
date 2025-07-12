@@ -37,8 +37,12 @@ function SidebarToggleButton() {
 }
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
+  const { viewMode } = useViewMode();
   return (
-      <div className="flex h-full w-full">
+      <div className={cn(
+        "flex h-full w-full",
+        viewMode === 'mobile' ? 'flex-col' : ''
+      )}>
         <Sidebar>
             <SidebarHeader>
               <Logo />
@@ -53,9 +57,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarContent>
-            <SidebarFooter>
-                <SidebarToggleButton />
-            </SidebarFooter>
+            { viewMode !== 'mobile' &&
+              <SidebarFooter>
+                  <SidebarToggleButton />
+              </SidebarFooter>
+            }
           </Sidebar>
           <SidebarInset className="flex flex-col">
             <Header />
