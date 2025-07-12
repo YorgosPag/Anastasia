@@ -20,8 +20,9 @@ export function ContactCard({ contact, isSelected, onClick }: ContactCardProps) 
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-4 p-2 rounded-lg w-full text-left transition-colors",
-        isSelected ? "bg-primary/10 text-primary-foreground" : "hover:bg-muted"
+        "flex items-center gap-4 p-2 rounded-lg w-full text-left transition-all duration-200",
+        "hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-primary/50",
+        isSelected ? "bg-primary/10 ring-2 ring-primary" : "hover:shadow-md"
       )}
     >
       <Avatar>
