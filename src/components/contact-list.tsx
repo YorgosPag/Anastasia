@@ -23,8 +23,8 @@ export function ContactList({ contacts, selectedContactId, onSelectContact }: Co
   }, [contacts, searchTerm]);
 
   return (
-    <>
-      <div className="p-4 border-b">
+    <div className="flex flex-col h-full">
+      <div className="pb-4">
         <h2 className="text-xl font-bold mb-4">Επαφές</h2>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -36,7 +36,7 @@ export function ContactList({ contacts, selectedContactId, onSelectContact }: Co
           />
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto p-4 space-y-3">
+      <div className="flex-grow overflow-y-auto space-y-3 -mr-2 pr-2">
           {filteredContacts.map(contact => (
             <ContactCard
               key={contact.id}
@@ -46,9 +46,9 @@ export function ContactList({ contacts, selectedContactId, onSelectContact }: Co
             />
           ))}
       </div>
-      <div className="p-4 border-t text-sm text-muted-foreground">
+      <div className="pt-4 text-sm text-muted-foreground">
         {filteredContacts.length} από {contacts.length} επαφές
       </div>
-    </>
+    </div>
   );
 }
