@@ -77,8 +77,12 @@
   .mobile-view #root, .mobile-view .flex-1.overflow-hidden {
     max-width: 480px;
     margin: 0 auto;
-    border-left: 1px solid hsl(var(--border));
-    border-right: 1px solid hsl(var(--border));
+    border: 8px solid black;
+    border-radius: 2.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+    position: relative;
+    height: calc(100vh - 4rem);
   }
 }
 

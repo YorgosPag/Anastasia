@@ -14,13 +14,14 @@ export default function Home() {
   const { viewMode } = useViewMode();
 
   React.useEffect(() => {
-    if (viewMode === 'desktop') {
+    // When switching to mobile view, always show the list first
+    if (viewMode === 'mobile') {
+      setSelectedContactId(null);
+    } else {
+      // In desktop view, select the first contact if none is selected
       if (!selectedContactId && contacts.length > 0) {
         setSelectedContactId(contacts[0].id);
       }
-    } else {
-        // In mobile view, if no contact is selected, we should be on the list view.
-        // If a contact was selected, we should stay on the details view.
     }
   }, [viewMode, contacts, selectedContactId]);
 
@@ -37,7 +38,7 @@ export default function Home() {
   const showDetails = selectedContactId && selectedContact;
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex gap-x-4 p-4">
+    <div id="root" className="h-[calc(100vh-4rem)] flex gap-x-4">
       <div className={cn(
         "w-full md:w-[320px] lg:w-[380px] flex-shrink-0 h-full transition-transform duration-300 ease-in-out",
         "bg-card rounded-xl shadow-md border",
