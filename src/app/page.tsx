@@ -42,12 +42,31 @@ export default function Home() {
   const isMobileView = viewMode === 'mobile';
   const showDetails = selectedContactId && selectedContact;
 
+  if (isMobileView) {
+    return (
+       <div id="root" className="h-full flex flex-col overflow-hidden relative">
+          {!showDetails ? (
+              <ContactList
+                  contacts={contacts}
+                  selectedContactId={selectedContactId}
+                  onSelectContact={handleSelectContact}
+              />
+          ) : (
+              <ContactDetails
+                contact={selectedContact}
+                onBack={() => setSelectedContactId(null)}
+              />
+          )}
+       </div>
+    )
+  }
+
+
   return (
     <div id="root" className="h-full flex gap-x-4 overflow-hidden relative">
       <div className={cn(
         "h-full transition-transform duration-300 ease-in-out",
         "w-full md:w-[320px] lg:w-[380px] flex-shrink-0",
-        (isMobileView && showDetails) && "hidden",
       )}>
          <ContactList
             contacts={contacts}
@@ -57,9 +76,7 @@ export default function Home() {
       </div>
       <div className={cn(
         "flex-grow h-full scroll-container transition-transform duration-300 ease-in-out",
-        isMobileView ? 'absolute inset-0 bg-background' : 'relative',
-        isMobileView && !showDetails ? "translate-x-full" : "translate-x-0",
-        !isMobileView && !showDetails && "hidden md:block"
+        !showDetails && "hidden md:block"
       )}>
         <ContactDetails
           contact={selectedContact}
