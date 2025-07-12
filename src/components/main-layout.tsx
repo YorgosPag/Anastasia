@@ -14,7 +14,7 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-full w-full">
       <Sidebar>
           <SidebarHeader>
-             {open ? <Logo /> : <SidebarLogoToggle />}
+             {/* This part will be handled by the Header component now */}
           </SidebarHeader>
           <SidebarContent>
               <SidebarMenu>
@@ -31,7 +31,9 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
           </SidebarFooter>
       </Sidebar>
       <div className="flex flex-col flex-grow">
-        <Header />
+        <Header>
+          {open ? <Logo /> : <SidebarLogoToggle />}
+        </Header>
         <main className="flex-1 overflow-y-auto relative p-4">
           {children}
         </main>
