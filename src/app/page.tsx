@@ -20,7 +20,7 @@ export default function Home() {
     <div className="h-[calc(100vh-4rem)] flex">
       <div className={cn(
         "w-full md:w-[320px] lg:w-[380px] flex-shrink-0 h-full overflow-y-auto bg-card md:border-r",
-        "transition-all duration-300 ease-in-out",
+        "transition-transform duration-300 ease-in-out",
         selectedContactId ? "hidden md:flex flex-col" : "flex flex-col"
       )}>
         <ContactList
@@ -32,7 +32,7 @@ export default function Home() {
       <Separator orientation="vertical" className="h-full hidden md:block" />
       <div className={cn(
         "flex-grow h-full overflow-y-auto",
-        "transition-all duration-300 ease-in-out",
+        "transition-opacity duration-300 ease-in-out",
         selectedContactId ? "block" : "hidden md:block"
       )}>
         <ContactDetails
