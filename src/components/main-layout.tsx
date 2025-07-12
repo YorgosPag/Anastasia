@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { SidebarProvider, Sidebar, OriginalSidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarToggleButton } from "@/components/ui/sidebar"
+import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarToggleButton, useSidebar, SidebarTrigger } from "@/components/ui/sidebar"
 import { useViewMode } from "./providers/view-mode-provider"
 import { Header } from "@/components/header"
 import { Logo } from "./logo";
@@ -9,16 +9,17 @@ import { Users } from "lucide-react";
 import { SidebarLogoToggle } from "./SidebarLogoToggle"
 
 function DesktopLayout({ children }: { children: React.ReactNode }) {
+  const { open } = useSidebar();
   return (
     <div className="flex h-full w-full">
-      <OriginalSidebar>
+      <Sidebar>
           <SidebarHeader>
-              <Logo />
+             {open ? <Logo /> : <SidebarLogoToggle />}
           </SidebarHeader>
           <SidebarContent>
               <SidebarMenu>
                   <SidebarMenuItem>
-                      <SidebarMenuButton isActive>
+                      <SidebarMenuButton isActive tooltip="Contact List">
                           <Users />
                           <span>Λίστα Επαφών</span>
                       </SidebarMenuButton>
@@ -28,7 +29,7 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
           <SidebarFooter>
               <SidebarToggleButton />
           </SidebarFooter>
-      </OriginalSidebar>
+      </Sidebar>
       <div className="flex flex-col flex-grow">
         <Header />
         <main className="flex-1 overflow-y-auto relative p-4">
@@ -59,7 +60,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className={cn(viewMode === 'mobile' ? 'mobile-view' : 'desktop-view flex h-screen w-full')}>
+      <div id="root-container" className={cn(viewMode === 'mobile' ? 'mobile-view' : 'desktop-view flex h-screen w-full')}>
         {viewMode === 'mobile' ? <MobileLayout>{children}</MobileLayout> : <DesktopLayout>{children}</DesktopLayout>}
       </div>
     </SidebarProvider>
