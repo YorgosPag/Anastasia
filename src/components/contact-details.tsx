@@ -74,7 +74,7 @@ export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
 
       <Separator />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Στοιχεία Επικοινωνίας</CardTitle>
@@ -123,7 +123,7 @@ export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
         </Card>
 
         {contact.socials.length > 0 &&
-            <Card className="lg:col-span-2">
+            <Card>
                 <CardHeader><CardTitle>Social Media & Ιστοσελίδες</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                     {contact.socials.map(social => (
@@ -138,7 +138,7 @@ export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
             </Card>
         }
         
-        <div className="lg:col-span-2">
+        <div>
             <LabelSuggester contact={contact} />
         </div>
       </div>

@@ -35,11 +35,16 @@ export function ViewModeProvider({
 
   useEffect(() => {
     setIsMounted(true);
-    const storedMode = localStorage.getItem(storageKey) as ViewMode | null;
-    if (storedMode) {
-      setViewMode(storedMode);
+  }, []);
+  
+  useEffect(() => {
+    if (isMounted) {
+      const storedMode = localStorage.getItem(storageKey) as ViewMode | null;
+      if (storedMode) {
+        setViewMode(storedMode);
+      }
     }
-  }, [storageKey]);
+  }, [isMounted, storageKey]);
 
   useEffect(() => {
     if (isMounted) {
