@@ -19,15 +19,16 @@ export default function Home() {
   return (
     <div className="h-[calc(100vh-4rem)] flex">
       <div className={cn(
-        "w-full md:w-[320px] lg:w-[380px] flex-shrink-0 h-full overflow-y-auto bg-card md:border-r",
-        "transition-transform duration-300 ease-in-out",
+        "w-full md:w-[320px] lg:w-[380px] flex-shrink-0 h-full overflow-y-auto transition-transform duration-300 ease-in-out",
         selectedContactId ? "hidden md:flex flex-col" : "flex flex-col"
       )}>
-        <ContactList
-          contacts={contacts}
-          selectedContactId={selectedContactId}
-          onSelectContact={setSelectedContactId}
-        />
+         <div className="dark:bg-[#2A2A2A] rounded-2xl p-5 mx-4 mt-4 shadow-lg overflow-y-auto space-y-3 max-h-[calc(100vh-100px)]">
+            <ContactList
+                contacts={contacts}
+                selectedContactId={selectedContactId}
+                onSelectContact={setSelectedContactId}
+            />
+        </div>
       </div>
       <Separator orientation="vertical" className="h-full hidden md:block" />
       <div className={cn(
