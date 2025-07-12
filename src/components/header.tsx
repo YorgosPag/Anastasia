@@ -1,6 +1,7 @@
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { UserNav } from "@/components/user-nav"
+import { ViewModeToggle } from "./view-mode-toggle"
 
 export function Header({ children }: { children?: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export function Header({ children }: { children?: React.ReactNode }) {
        <div className="flex-1">{children}</div>
        <div className="flex items-center gap-2">
         <ThemeToggle />
+        <ViewModeToggle />
         <UserNav />
        </div>
     </header>

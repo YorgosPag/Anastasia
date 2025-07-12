@@ -85,4 +85,11 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+
+  .mobile-view #root, .mobile-view .flex-1.overflow-hidden {
+    max-width: 480px;
+    margin: 0 auto;
+    border-left: 1px solid hsl(var(--border));
+    border-right: 1px solid hsl(var(--border));
+  }
 }
