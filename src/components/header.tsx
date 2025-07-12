@@ -13,7 +13,7 @@ export function Header() {
        <div className="flex items-center gap-2">
         {isMobile && <SidebarTrigger />}
         <div className="hidden md:block">
-          <Logo />
+          {/* This space is intentionally left blank for desktop, as the logo is in the sidebar */}
         </div>
         <div className="md:hidden">
             <Logo />
