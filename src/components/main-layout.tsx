@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarToggleButton, useSidebar } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarToggleButton } from "@/components/ui/sidebar"
 import { useViewMode } from "./providers/view-mode-provider"
 import { Header } from "@/components/header"
 import { Users } from "lucide-react";
@@ -56,10 +56,8 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
   const { viewMode } = useViewMode();
 
   return (
-    <SidebarProvider>
       <div id="root-container" className={cn(viewMode === 'mobile' ? 'mobile-view' : 'desktop-view flex h-screen w-full')}>
         {viewMode === 'mobile' ? <MobileLayout>{children}</MobileLayout> : <DesktopLayout>{children}</DesktopLayout>}
       </div>
-    </SidebarProvider>
   )
 }

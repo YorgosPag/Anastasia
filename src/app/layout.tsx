@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { MainLayout } from '@/components/main-layout';
 import { ViewModeProvider } from '@/components/providers/view-mode-provider';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 export const metadata: Metadata = {
   title: 'NESTOR coach',
@@ -30,9 +31,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ViewModeProvider>
-            <MainLayout>
-              {children}
-            </MainLayout>
+            <SidebarProvider>
+              <MainLayout>
+                {children}
+              </MainLayout>
+            </SidebarProvider>
             <Toaster />
           </ViewModeProvider>
         </ThemeProvider>
