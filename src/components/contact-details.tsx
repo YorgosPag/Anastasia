@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { BrandIcons, MessageIcons, PhoneIcon, MailIcon, GlobeIcon, BuildingIcon, UserIcon, HashIcon, MapPinIcon, ArrowLeft } from "@/components/icons";
 import { LabelSuggester } from "./label-suggester";
 import { Button } from "./ui/button";
+import { useViewMode } from "@/components/providers/view-mode-provider";
 import { cn } from "@/lib/utils";
 
 interface ContactDetailsProps {
@@ -22,6 +23,8 @@ const contactTypeTranslations = {
 };
 
 export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
+  const { viewMode } = useViewMode();
+  
   if (!contact) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
@@ -54,7 +57,7 @@ export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="flex items-start gap-6">
-        {onBack && <Button variant="ghost" size="icon" className="md:hidden" onClick={onBack}><ArrowLeft/></Button>}
+        {viewMode === 'mobile' && onBack && <Button variant="ghost" size="icon" className="md:hidden" onClick={onBack}><ArrowLeft/></Button>}
         <Avatar className="w-20 h-20 text-3xl">
           <AvatarImage src={contact.avatarUrl} alt={displayName} data-ai-hint="person portrait"/>
           <AvatarFallback>{fallback}</AvatarFallback>
