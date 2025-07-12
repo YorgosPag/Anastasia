@@ -31,7 +31,7 @@ export const mockContacts: Contact[] = [
       { id: "s2", platform: "website", url: "https://georgep.dev" },
     ],
     notes: " βασικός προγραμματιστής για το project 'Phoenix'. Προτιμά επικοινωνία μέσω email.",
-    labels: ["freelancer", "partner"],
+    roles: ["freelancer", "partner"],
   },
   {
     id: "2",
@@ -39,6 +39,7 @@ export const mockContacts: Contact[] = [
     avatarUrl: "https://placehold.co/100x100.png",
     companyName: "Cosmos Business Systems",
     profession: "IT Solutions",
+    name: "Cosmos Business Systems",
     taxId: "987654321",
     address: {
       street: "Λεωφόρος Κηφισίας",
@@ -59,7 +60,7 @@ export const mockContacts: Contact[] = [
       { id: "s4", platform: "linkedin", url: "https://linkedin.com/company/cosmos" },
     ],
     notes: "Πάροχος λύσεων πληροφορικής. Μακροχρόνιος πελάτης.",
-    labels: ["client", "vendor"],
+    roles: ["client", "vendor"],
   },
   {
     id: "3",
@@ -74,13 +75,14 @@ export const mockContacts: Contact[] = [
       { id: "s5", platform: "instagram", url: "https://instagram.com/mariadesign" },
     ],
     notes: "Ελεύθερη επαγγελματίας. Συνεργασία σε διάφορα projects.",
-    labels: ["freelancer", "prospect"],
+    roles: ["freelancer", "prospect"],
   },
   {
     id: "4",
     type: "public-service",
     avatarUrl: "https://placehold.co/100x100.png",
     companyName: "ΔΟΥ Αμαρουσίου",
+    name: "ΔΟΥ Αμαρουσίου",
     address: {
       street: "Αριστοτέλους",
       number: "1",
@@ -93,6 +95,6 @@ export const mockContacts: Contact[] = [
     emails: [],
     socials: [],
     notes: "Δημόσια Οικονομική Υπηρεσία.",
-    labels: ["vendor"],
+    roles: ["vendor"],
   },
 ];

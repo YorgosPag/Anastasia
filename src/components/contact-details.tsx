@@ -64,7 +64,7 @@ export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
           <p className="text-muted-foreground">{contact.profession}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             <Badge variant="secondary">{contactTypeTranslations[contact.type]}</Badge>
-            {contact.labels.map(label => <Badge key={label} variant="outline">{label}</Badge>)}
+            {contact.roles.map(role => <Badge key={role} variant="outline">{role}</Badge>)}
           </div>
         </div>
       </div>

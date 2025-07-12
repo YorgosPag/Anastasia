@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, Sparkles } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { suggestContactLabels, SuggestContactLabelsInput } from '@/ai/flows/suggest-contact-labels';
+import { suggestContactRoles, SuggestContactRolesInput } from '@/ai/flows/suggest-contact-labels';
 import type { Contact } from '@/lib/types';
 
 interface LabelSuggesterProps {
@@ -14,15 +14,15 @@ interface LabelSuggesterProps {
 }
 
 export function LabelSuggester({ contact }: LabelSuggesterProps) {
-  const [suggestedLabels, setSuggestedLabels] = useState<string[]>([]);
+  const [suggestedRoles, setSuggestedRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSuggestLabels = async () => {
     setIsLoading(true);
-    setSuggestedLabels([]);
+    setSuggestedRoles([]);
     
-    const input: SuggestContactLabelsInput = {
+    const input: SuggestContactRolesInput = {
       name: `${contact.name || ''} ${contact.surname || ''}`.trim() || contact.companyName || '',
       company: contact.companyName,
       jobTitle: contact.profession,
@@ -31,16 +31,16 @@ export function LabelSuggester({ contact }: LabelSuggesterProps) {
     };
 
     try {
-      const result = await suggestContactLabels(input);
-      if (result.labels) {
-        setSuggestedLabels(result.labels);
+      const result = await suggestContactRoles(input);
+      if (result.roles) {
+        setSuggestedRoles(result.roles);
       }
     } catch (error) {
-      console.error("Error suggesting labels:", error);
+      console.error("Error suggesting roles:", error);
       toast({
         variant: "destructive",
         title: "Σφάλμα",
-        description: "Δεν ήταν δυνατή η λήψη προτάσεων ετικετών.",
+        description: "Δεν ήταν δυνατή η λήψη προτάσεων ρόλων.",
       });
     } finally {
       setIsLoading(false);
@@ -50,9 +50,9 @@ export function LabelSuggester({ contact }: LabelSuggesterProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>AI Label Suggester</CardTitle>
+        <CardTitle>AI Role Suggester</CardTitle>
         <CardDescription>
-          Λάβετε προτάσεις ετικετών με βάση τα στοιχεία της επαφής.
+          Λάβετε προτάσεις ρόλων με βάση τα στοιχεία της επαφής.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -63,11 +63,11 @@ export function LabelSuggester({ contact }: LabelSuggesterProps) {
             ) : (
               <Sparkles className="mr-2 h-4 w-4" />
             )}
-            Πρόταση Ετικετών
+            Πρόταση Ρόλων
           </Button>
           <div className="flex flex-wrap gap-2">
-            {suggestedLabels.map((label, index) => (
-              <Badge key={index} variant="secondary">{label}</Badge>
+            {suggestedRoles.map((role, index) => (
+              <Badge key={index} variant="secondary">{role}</Badge>
             ))}
           </div>
         </div>

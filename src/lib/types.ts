@@ -46,5 +46,5 @@ export interface Contact {
   emails: Email[];
   socials: SocialMedia[];
   notes?: string;
-  labels: ContactRole[];
+  roles: ContactRole[];
 }
