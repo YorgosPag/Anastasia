@@ -38,7 +38,7 @@ function SidebarToggleButton() {
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-      <>
+      <div className="flex h-full w-full">
         <Sidebar>
             <SidebarHeader>
               <Logo />
@@ -63,7 +63,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               {children}
             </main>
           </SidebarInset>
-      </>
+      </div>
   )
 }
 
@@ -73,7 +73,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div id="root-container" className={cn(viewMode === 'mobile' ? 'mobile-view' : 'desktop-view flex')}>
+      <div id="root-container" className={cn(viewMode === 'mobile' ? 'mobile-view' : 'desktop-view flex h-full')}>
         {viewMode === 'mobile' ? (
           <div id="mobile-device-frame">
               <AppLayout>{children}</AppLayout>
