@@ -36,8 +36,7 @@ export function ContactList({ contacts, selectedContactId, onSelectContact }: Co
           />
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto">
-        <div className="p-2 space-y-1">
+      <div className="flex-grow overflow-y-auto p-4 space-y-3">
           {filteredContacts.map(contact => (
             <ContactCard
               key={contact.id}
@@ -46,7 +45,6 @@ export function ContactList({ contacts, selectedContactId, onSelectContact }: Co
               onClick={() => onSelectContact(contact.id)}
             />
           ))}
-        </div>
       </div>
       <div className="p-4 border-t text-sm text-muted-foreground">
         {filteredContacts.length} από {contacts.length} επαφές
