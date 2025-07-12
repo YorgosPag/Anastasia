@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { SidebarProvider as OriginalSidebarProvider, SidebarInset } from "@/components/original-sidebar";
 import { cn } from "@/lib/utils"
 import { SidebarProvider, Sidebar } from "@/components/ui/sidebar"
+import { SidebarProvider as OriginalSidebarProvider } from "@/components/original-sidebar";
 import { useViewMode } from "./providers/view-mode-provider"
 import { Header } from "@/components/header"
 
@@ -12,15 +12,15 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   if (viewMode === 'desktop') {
     return (
       <OriginalSidebarProvider>
-        <div className={cn("flex h-full w-full")}>
-          <Sidebar />
-          <SidebarInset className="flex flex-col">
-            <Header />
-            <main className="flex-1 overflow-hidden relative p-4">
-              {children}
-            </main>
-          </SidebarInset>
-        </div>
+          <div className="flex h-full w-full">
+            <Sidebar />
+            <div className="flex flex-col flex-grow">
+              <Header />
+              <main className="flex-1 overflow-y-auto relative p-4">
+                {children}
+              </main>
+            </div>
+          </div>
       </OriginalSidebarProvider>
     )
   }
