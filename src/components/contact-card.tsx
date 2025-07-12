@@ -21,8 +21,10 @@ export function ContactCard({ contact, isSelected, onClick }: ContactCardProps) 
       onClick={onClick}
       className={cn(
         "flex items-center gap-4 p-2 rounded-lg w-full text-left transition-colors duration-200",
-        "hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-primary/50",
-        isSelected ? "bg-primary/10 ring-2 ring-primary relative z-10" : "hover:shadow-md"
+        "hover:bg-muted/80 focus:outline-none",
+        isSelected
+          ? "bg-primary/10 border-2 border-primary relative z-20"
+          : "hover:shadow-md border-2 border-transparent"
       )}
     >
       <Avatar>
