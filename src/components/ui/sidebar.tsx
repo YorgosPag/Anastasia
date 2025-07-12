@@ -16,8 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Logo } from "../logo"
-import { SidebarLogoToggle } from "../SidebarLogoToggle"
+import { Logo } from "../logo";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -26,7 +25,7 @@ const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "4rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
-type SidebarContext = {
+type SidebarContextValue = {
   state: "expanded" | "collapsed"
   open: boolean
   setOpen: (open: boolean) => void
@@ -36,7 +35,7 @@ type SidebarContext = {
   toggleSidebar: () => void
 }
 
-const SidebarContext = React.createContext<SidebarContext | null>(null)
+const SidebarContext = React.createContext<SidebarContextValue | null>(null)
 
 function useSidebar() {
   const context = React.useContext(SidebarContext)
@@ -84,7 +83,9 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        if (typeof document !== 'undefined') {
+          document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        }
       },
       [setOpenProp, open]
     )
@@ -116,7 +117,7 @@ const SidebarProvider = React.forwardRef<
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed"
 
-    const contextValue = React.useMemo<SidebarContext>(
+    const contextValue = React.useMemo<SidebarContextValue>(
       () => ({
         state,
         open,
@@ -156,18 +157,16 @@ const SidebarProvider = React.forwardRef<
 )
 SidebarProvider.displayName = "SidebarProvider"
 
-const OriginalSidebar = React.forwardRef<
+const Sidebar = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
     side?: "left" | "right"
-    variant?: "sidebar" | "floating" | "inset"
-    collapsible?: "offcanvas" | "icon" | "none"
+    collapsible?: "icon" | "none"
   }
 >(
   (
     {
       side = "left",
-      variant = "sidebar",
       collapsible = "icon",
       className,
       children,
@@ -177,7 +176,6 @@ const OriginalSidebar = React.forwardRef<
   ) => {
     const { isMobile, openMobile, setOpenMobile } = useSidebar()
     const { state } = useSidebar()
-
 
     if (isMobile) {
       return (
@@ -193,7 +191,21 @@ const OriginalSidebar = React.forwardRef<
             }
             side={side}
           >
-            <div className="flex h-full w-full flex-col">{children}</div>
+            <div className="flex h-full w-full flex-col">
+              <div className="flex items-center px-4 py-3 border-b">
+                <Logo />
+              </div>
+              <SidebarContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton isActive>
+                      <Users />
+                      <span>Λίστα Επαφών</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarContent>
+            </div>
           </SheetContent>
         </Sheet>
       )
@@ -220,11 +232,11 @@ const OriginalSidebar = React.forwardRef<
         className={cn(
           "group hidden md:flex flex-col text-sidebar-foreground transition-all duration-300 ease-in-out flex-shrink-0",
           state === 'expanded' ? 'w-[--sidebar-width]' : 'w-[--sidebar-width-icon]',
+          "bg-sidebar border-r border-sidebar-border",
           className,
         )}
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
-        data-variant={variant}
         data-side={side}
         {...props}
       >
@@ -233,36 +245,7 @@ const OriginalSidebar = React.forwardRef<
     )
   }
 )
-OriginalSidebar.displayName = "OriginalSidebar"
-
-function Sidebar() {
-    const { openMobile, setOpenMobile, isMobile } = useSidebar()
-    
-    if (!isMobile) return null;
-
-  return (
-    <Sheet open={openMobile} onOpenChange={setOpenMobile}>
-      <SheetContent
-        side="left"
-        className="z-50 w-72 p-0 bg-sidebar text-sidebar-foreground rounded-r-xl shadow-xl"
-      >
-        <div className="flex h-full w-full flex-col">
-          <div className="flex items-center px-4 py-3">
-            <Logo />
-          </div>
-          <Separator />
-          <div className="p-4">
-            <Button variant="ghost" className="w-full justify-start">
-              <Users className="mr-2 h-4 w-4" />
-              Λίστα Επαφών
-            </Button>
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
-  )
-}
-
+Sidebar.displayName = "Sidebar"
 
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -298,7 +281,7 @@ const SidebarHeader = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex flex-col gap-2 p-2 h-16 items-center justify-center", className)}
       {...props}
     />
   )
@@ -329,7 +312,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-2",
         "group-data-[state=collapsed]:overflow-hidden",
         className
       )}
@@ -459,7 +442,7 @@ function SidebarToggleButton() {
             <SidebarMenuItem>
                 <SidebarMenuButton onClick={toggleSidebar} tooltip={isCollapsed ? "Expand" : "Collapse"}>
                     {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
-                    <span className="group-data-[collapsible=icon]:hidden">
+                    <span className="group-data-[state=collapsed]:hidden">
                       {isCollapsed ? '' : 'Collapse Sidebar'}
                     </span>
                 </SidebarMenuButton>
@@ -470,7 +453,6 @@ function SidebarToggleButton() {
 
 export {
   Sidebar,
-  OriginalSidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
