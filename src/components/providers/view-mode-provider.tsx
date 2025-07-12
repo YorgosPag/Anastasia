@@ -14,12 +14,14 @@ type ViewModeProviderState = {
   viewMode: ViewMode
   setViewMode: (mode: ViewMode) => void
   toggleViewMode: () => void
+  isMounted: boolean
 }
 
 const initialState: ViewModeProviderState = {
   viewMode: "desktop",
   setViewMode: () => null,
   toggleViewMode: () => null,
+  isMounted: false,
 }
 
 const ViewModeProviderContext = createContext<ViewModeProviderState>(initialState)
@@ -35,17 +37,12 @@ export function ViewModeProvider({
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
-  
-  useEffect(() => {
-    if (isMounted) {
-      const storedMode = localStorage.getItem(storageKey) as ViewMode | null;
-      if (storedMode) {
+    const storedMode = localStorage.getItem(storageKey) as ViewMode | null;
+    if (storedMode) {
         setViewMode(storedMode);
-      }
     }
-  }, [isMounted, storageKey]);
-
+  }, [storageKey]);
+  
   useEffect(() => {
     if (isMounted) {
       const root = window.document.documentElement
@@ -65,6 +62,7 @@ export function ViewModeProvider({
     viewMode: isMounted ? viewMode : defaultMode,
     setViewMode,
     toggleViewMode,
+    isMounted,
   }
 
   return (

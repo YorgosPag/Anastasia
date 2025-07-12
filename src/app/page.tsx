@@ -39,7 +39,7 @@ export default function Home() {
   return (
     <div className="h-[calc(100vh-4rem)] flex gap-x-4 p-4">
       <div className={cn(
-        "w-full md:w-[320px] lg:w-[380px] flex-shrink-0 h-full overflow-y-auto transition-transform duration-300 ease-in-out",
+        "w-full md:w-[320px] lg:w-[380px] flex-shrink-0 h-full transition-transform duration-300 ease-in-out",
         "bg-card rounded-xl shadow-md border",
         isMobileView && showDetails ? "hidden" : "flex flex-col"
       )}>
@@ -50,7 +50,7 @@ export default function Home() {
         />
       </div>
       <div className={cn(
-        "flex-grow h-full overflow-y-auto",
+        "flex-grow h-full scroll-container",
         "transition-opacity duration-300 ease-in-out",
         (isMobileView && !showDetails) ? "hidden" : "block",
         (!isMobileView && !showDetails) ? "hidden md:block" : "block"

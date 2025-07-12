@@ -8,20 +8,31 @@ import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export function ViewModeToggle() {
-  const { viewMode, toggleViewMode } = useViewMode()
+  const { viewMode, toggleViewMode, isMounted } = useViewMode()
+
+  if (!isMounted) {
+    return (
+       <Button variant="ghost" size="icon" disabled>
+          <Monitor className="h-[1.2rem] w-[1.2rem]" />
+        </Button>
+    )
+  }
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button variant="ghost" size="icon" onClick={toggleViewMode} aria-label="Toggle view mode">
-            <Monitor className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" style={{ display: viewMode === 'mobile' ? 'none' : 'block' }}/>
-            <Smartphone className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" style={{ display: viewMode === 'desktop' ? 'none' : 'block' }}/>
+            {viewMode === 'desktop' ? (
+                <Smartphone className="h-[1.2rem] w-[1.2rem]" />
+            ) : (
+                <Monitor className="h-[1.2rem] w-[1.2rem]" />
+            )}
             <span className="sr-only">Toggle view mode</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-            <p>Εναλλαγή Προβολής: {viewMode === 'desktop' ? 'Κινητό' : 'Desktop'}</p>
+            <p>Εναλλαγή Προβολής σε {viewMode === 'desktop' ? 'Κινητό' : 'Desktop'}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

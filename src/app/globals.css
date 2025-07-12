@@ -81,3 +81,37 @@
     border-right: 1px solid hsl(var(--border));
   }
 }
+
+@layer utilities {
+  .scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: #666 #2a2a2a; /* For Firefox */
+
+    /* For Webkit browsers */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
+  }
+
+  .scroll-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scroll-container::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .scroll-container:hover::-webkit-scrollbar-thumb {
+    opacity: 1;
+  }
+}
