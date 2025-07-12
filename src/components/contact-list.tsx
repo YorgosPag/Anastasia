@@ -23,7 +23,7 @@ export function ContactList({ contacts, selectedContactId, onSelectContact }: Co
   }, [contacts, searchTerm]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-card rounded-xl shadow-md border">
        <div className="p-4 pb-4">
         <h2 className="text-xl font-bold mb-4">Επαφές</h2>
         <div className="relative">

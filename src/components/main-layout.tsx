@@ -27,11 +27,44 @@ function SidebarToggleButton() {
             <SidebarMenuItem>
                 <SidebarMenuButton onClick={toggleSidebar} tooltip={isCollapsed ? "Expand" : "Collapse"}>
                     {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
-                    <span>{isCollapsed ? '' : 'Collapse Sidebar'}</span>
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {isCollapsed ? '' : 'Collapse Sidebar'}
+                    </span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
     )
+}
+
+export function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+      <>
+        <Sidebar>
+            <SidebarHeader>
+              <Logo />
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton isActive>
+                    <Users />
+                    <span>Λίστα Επαφών</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarContent>
+            <SidebarFooter>
+                <SidebarToggleButton />
+            </SidebarFooter>
+          </Sidebar>
+          <SidebarInset className="flex flex-col">
+            <Header />
+            <main className="flex-1 overflow-hidden relative p-4">
+              {children}
+            </main>
+          </SidebarInset>
+      </>
+  )
 }
 
 
@@ -40,35 +73,15 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar className={cn(viewMode === 'mobile' && 'hidden')}>
-        <SidebarHeader>
-          <Logo />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton isActive>
-                <Users />
-                <span>Λίστα Επαφών</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-            <SidebarToggleButton />
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset className={cn(
-        "flex flex-col transition-[margin-left] duration-300 ease-in-out",
-        viewMode === 'mobile' ? 'm-0 p-0 h-screen' : 'h-auto'
-        )}>
-        <div id="root-container" className={cn(viewMode === 'mobile' && 'mobile-view')}>
-          <Header />
-          <main className="flex-1 overflow-hidden relative">
-            {children}
-          </main>
-        </div>
-      </SidebarInset>
+      <div id="root-container" className={cn(viewMode === 'mobile' ? 'mobile-view' : 'desktop-view flex')}>
+        {viewMode === 'mobile' ? (
+          <div id="mobile-device-frame">
+              <AppLayout>{children}</AppLayout>
+          </div>
+        ) : (
+          <AppLayout>{children}</AppLayout>
+        )}
+      </div>
     </SidebarProvider>
   )
 }

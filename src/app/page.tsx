@@ -38,10 +38,10 @@ export default function Home() {
   const showDetails = selectedContactId && selectedContact;
 
   return (
-    <div id="root" className="h-full flex gap-x-4">
+    <div id="root" className="h-full flex gap-x-4 overflow-hidden relative">
       <div className={cn(
-        "w-full md:w-[320px] lg:w-[380px] flex-shrink-0 h-full transition-transform duration-300 ease-in-out",
-        "bg-card rounded-xl shadow-md border",
+        "h-full transition-transform duration-300 ease-in-out",
+        "w-full md:w-[320px] lg:w-[380px] flex-shrink-0",
         (isMobileView && showDetails) && "hidden",
       )}>
          <ContactList
@@ -51,8 +51,7 @@ export default function Home() {
         />
       </div>
       <div className={cn(
-        "flex-grow h-full scroll-container",
-        "transition-transform duration-300 ease-in-out",
+        "flex-grow h-full scroll-container transition-transform duration-300 ease-in-out",
         isMobileView ? 'absolute inset-0 bg-background' : 'relative',
         isMobileView && !showDetails ? "translate-x-full" : "translate-x-0",
         !isMobileView && !showDetails && "hidden md:block"

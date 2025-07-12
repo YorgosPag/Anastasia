@@ -84,7 +84,7 @@
     background-color: hsl(var(--muted) / 0.5);
   }
 
-  .mobile-view #root {
+  .mobile-view #mobile-device-frame {
       width: 430px;
       height: 840px;
       border: 8px solid black;
@@ -101,10 +101,8 @@
 @layer utilities {
   .scroll-container {
     scrollbar-width: thin;
-    scrollbar-color: #666 #2a2a2a; /* For Firefox */
+    scrollbar-color: hsl(var(--muted-foreground)) transparent;
 
-    /* For Webkit browsers */
-    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     overscroll-behavior-y: contain;
@@ -119,7 +117,7 @@
   }
 
   .scroll-container::-webkit-scrollbar-thumb {
-    background-color: #666;
+    background-color: hsl(var(--muted-foreground));
     border-radius: 10px;
     border: 3px solid transparent;
     background-clip: content-box;
