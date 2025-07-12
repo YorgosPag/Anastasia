@@ -30,31 +30,35 @@ export function ViewModeProvider({
   storageKey = "ui-view-mode",
   ...props
 }: ViewModeProviderProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>(() => {
-     if (typeof window === "undefined") {
-      return defaultMode;
-    }
-    return (localStorage.getItem(storageKey) as ViewMode) || defaultMode
-  })
+  const [viewMode, setViewMode] = useState<ViewMode>(defaultMode)
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const root = window.document.documentElement
-    
-    root.classList.remove("desktop-view", "mobile-view")
-    root.classList.add(`${viewMode}-view`)
+    setIsMounted(true);
+    const storedMode = localStorage.getItem(storageKey) as ViewMode | null;
+    if (storedMode) {
+      setViewMode(storedMode);
+    }
+  }, [storageKey]);
 
-    localStorage.setItem(storageKey, viewMode)
-  }, [viewMode, storageKey])
+  useEffect(() => {
+    if (isMounted) {
+      const root = window.document.documentElement
+      
+      root.classList.remove("desktop-view", "mobile-view")
+      root.classList.add(`${viewMode}-view`)
+
+      localStorage.setItem(storageKey, viewMode)
+    }
+  }, [viewMode, storageKey, isMounted])
 
   const toggleViewMode = () => {
     setViewMode(prevMode => (prevMode === 'desktop' ? 'mobile' : 'desktop'));
   };
-
+  
   const value = {
-    viewMode,
-    setViewMode: (mode: ViewMode) => {
-      setViewMode(mode)
-    },
+    viewMode: isMounted ? viewMode : defaultMode,
+    setViewMode,
     toggleViewMode,
   }
 
