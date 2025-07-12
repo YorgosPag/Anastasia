@@ -19,7 +19,7 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
                     <SidebarMenuItem>
                         <SidebarMenuButton isActive tooltip="Contact List">
                             <Users />
-                            <span>Λίστα Επαφών</span>
+                            <span className="group-data-[state=collapsed]:hidden">Λίστα Επαφών</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
