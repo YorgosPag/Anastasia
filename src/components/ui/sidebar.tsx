@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/tooltip"
 import { Logo } from "@/components/logo"
 import { Separator } from "./separator"
-import { useSidebar as useOriginalSidebar, Sidebar as OriginalSidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarToggleButton } from "@/components/original-sidebar";
 
 type SidebarContextValue = {
   openMobile: boolean;
@@ -36,9 +35,8 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [openMobile, setOpenMobile] = React.useState(false)
 
   const toggleSidebar = () => {
-    if (isMobile) {
-      setOpenMobile((prev) => !prev)
-    }
+    // This hook is only for mobile sheet sidebar
+    setOpenMobile((prev) => !prev)
   }
 
   const value = {
@@ -57,30 +55,8 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 
 export function Sidebar() {
     const { openMobile, setOpenMobile, isMobile } = useSidebar()
-    const { state: originalState } = useOriginalSidebar();
-
-    if (!isMobile) {
-        return (
-            <OriginalSidebar>
-                <SidebarHeader>
-                    <Logo />
-                </SidebarHeader>
-                <SidebarContent>
-                    <SidebarMenu>
-                        <SidebarMenuItem>
-                            <SidebarMenuButton isActive>
-                                <Users />
-                                <span>Λίστα Επαφών</span>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    </SidebarMenu>
-                </SidebarContent>
-                <SidebarFooter>
-                    <SidebarToggleButton />
-                </SidebarFooter>
-            </OriginalSidebar>
-        )
-    }
+    
+    if (!isMobile) return null;
 
   return (
     <Sheet open={openMobile} onOpenChange={setOpenMobile}>
