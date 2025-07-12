@@ -7,11 +7,13 @@ import type { Contact } from "@/lib/types";
 import { mockContacts } from "@/data/mock-data";
 import { cn } from "@/lib/utils";
 import { useViewMode } from "@/components/providers/view-mode-provider";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export default function Home() {
   const [contacts, setContacts] = React.useState<Contact[]>(mockContacts);
   const [selectedContactId, setSelectedContactId] = React.useState<string | null>(null);
   const { viewMode } = useViewMode();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   React.useEffect(() => {
     // When switching to mobile view, always show the list first
@@ -32,6 +34,9 @@ export default function Home() {
   
   const handleSelectContact = (id: string) => {
     setSelectedContactId(id);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   }
 
   const isMobileView = viewMode === 'mobile';
