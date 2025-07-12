@@ -9,7 +9,6 @@ import { InteractiveLogo } from "./interactive-logo"
 
 function DesktopLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
       <div className="flex h-full w-full">
         <Sidebar>
             <SidebarHeader>
@@ -36,13 +35,11 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
           </main>
         </div>
       </div>
-    </SidebarProvider>
   )
 }
 
 function MobileLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
       <div id="mobile-device-frame">
           <div className="flex h-full w-full flex-col">
             <Header/>
@@ -52,7 +49,6 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
             </main>
           </div>
       </div>
-    </SidebarProvider>
   )
 }
 
@@ -60,8 +56,10 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
   const { viewMode } = useViewMode();
 
   return (
+    <SidebarProvider>
       <div id="root-container" className={cn(viewMode === 'mobile' ? 'mobile-view' : 'desktop-view flex h-screen w-full')}>
         {viewMode === 'mobile' ? <MobileLayout>{children}</MobileLayout> : <DesktopLayout>{children}</DesktopLayout>}
       </div>
+    </SidebarProvider>
   )
 }
