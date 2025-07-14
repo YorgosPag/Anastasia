@@ -55,16 +55,20 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
                        </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton tooltip="Προσφορές Προμηθευτών">
-                            <Package />
-                            <span className="group-data-[state=collapsed]:hidden">Προσφορές Προμηθευτών</span>
-                        </SidebarMenuButton>
+                        <Link href="/supplier-offers" className="w-full">
+                            <SidebarMenuButton isActive={pathname === '/supplier-offers'} tooltip="Προσφορές Προμηθευτών">
+                                <Package />
+                                <span className="group-data-[state=collapsed]:hidden">Προσφορές Προμηθευτών</span>
+                            </SidebarMenuButton>
+                        </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton tooltip="Οδηγίες">
-                            <HelpCircle />
-                            <span className="group-data-[state=collapsed]:hidden">Οδηγίες</span>
-                        </SidebarMenuButton>
+                        <Link href="/instructions" className="w-full">
+                            <SidebarMenuButton isActive={pathname === '/instructions'} tooltip="Οδηγίες">
+                                <HelpCircle />
+                                <span className="group-data-[state=collapsed]:hidden">Οδηγίες</span>
+                            </SidebarMenuButton>
+                        </Link>
                     </SidebarMenuItem>
                 </SidebarMenu>
                 <Separator className="my-2" />
@@ -117,7 +121,6 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
       <div id="mobile-device-frame">
           <div className="flex h-full w-full flex-col">
             <Header/>
-            <Sidebar />
             <main className="relative flex-1 overflow-y-auto bg-background p-4">
               {children}
             </main>
