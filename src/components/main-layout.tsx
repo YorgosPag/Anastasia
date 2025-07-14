@@ -47,10 +47,12 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
                       </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton tooltip="Αναφορές">
+                       <Link href="/reports" className="w-full">
+                        <SidebarMenuButton isActive={pathname === '/reports'} tooltip="Αναφορές">
                             <FileBarChart />
                             <span className="group-data-[state=collapsed]:hidden">Αναφορές</span>
                         </SidebarMenuButton>
+                       </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                         <SidebarMenuButton tooltip="Προσφορές Προμηθευτών">
