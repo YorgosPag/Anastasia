@@ -95,7 +95,7 @@ export default function ContactsPage() {
           </Button>
         </div>
 
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-2xl">
            <ContactForm 
               onSubmit={handleFormSubmit}
               onCancel={() => setIsFormOpen(false)}

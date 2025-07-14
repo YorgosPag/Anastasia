@@ -48,6 +48,14 @@ const contactFormSchema = z.object({
   taxId: z.string().optional(),
   notes: z.string().optional(),
   roles: z.array(z.string()).optional(),
+  address: z.object({
+    street: z.string().optional(),
+    number: z.string().optional(),
+    postalCode: z.string().optional(),
+    city: z.string().optional(),
+    municipality: z.string().optional(),
+    prefecture: z.string().optional(),
+  }).optional(),
 }).refine(data => {
     if ((data.type === 'company' || data.type === 'public-service') && !data.companyName) {
         return false;
@@ -98,6 +106,14 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
       birthPlace: contact?.birthPlace ?? "",
       gender: contact?.gender,
       nationality: contact?.nationality ?? "",
+      address: {
+        street: contact?.address?.street ?? "",
+        number: contact?.address?.number ?? "",
+        postalCode: contact?.address?.postalCode ?? "",
+        city: contact?.address?.city ?? "",
+        municipality: contact?.address?.municipality ?? "",
+        prefecture: contact?.address?.prefecture ?? "",
+      },
     },
   });
 
@@ -120,7 +136,7 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4 max-h-[70vh] overflow-y-auto pr-4">
            <FormField
             control={form.control}
             name="type"
@@ -144,11 +160,11 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
             )}
           />
 
-          <Accordion type="multiple" defaultValue={['personal', 'identity']} className="w-full">
+          <Accordion type="multiple" defaultValue={['personal']} className="w-full">
             <AccordionItem value="personal">
               <AccordionTrigger>Προσωπικά Στοιχεία</AccordionTrigger>
               <AccordionContent className="space-y-4">
-                 {watchType === "individual" && (
+                 {watchType === "individual" ? (
                     <>
                     <div className="flex gap-4">
                       <FormField
@@ -298,43 +314,26 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
                         />
                     </div>
                     </>
+                  ) : (
+                     <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Ονομασία</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Ονομασία" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                   )}
-
-                  {(watchType === "company" || watchType === "public-service") && (
-                    <FormField
-                      control={form.control}
-                      name="companyName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Επωνυμία</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Επωνυμία Εταιρείας / Υπηρεσίας" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-
-                  <FormField
-                    control={form.control}
-                    name="profession"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Επάγγελμα / Ιδιότητα</FormLabel>
-                        <FormControl>
-                          <Input placeholder="π.χ. Υδραυλικός, Δικηγόρος" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                   <div className="flex items-center space-x-2">
                     <div className="flex-1 aspect-square max-w-24 border-2 border-dashed rounded-lg flex items-center justify-center text-center p-2 text-muted-foreground text-sm cursor-pointer hover:bg-accent">
                         Μεταφέρετε ή πατήστε για ανέβασμα
                     </div>
                  </div>
-
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="identity">
@@ -373,21 +372,135 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
                   Coming soon...
               </AccordionContent>
             </AccordionItem>
+            <AccordionItem value="address">
+              <AccordionTrigger>Στοιχεία Διεύθυνσης</AccordionTrigger>
+              <AccordionContent className="space-y-4">
+                <div className="flex gap-4">
+                  <FormField
+                    control={form.control}
+                    name="address.street"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Οδός</FormLabel>
+                        <FormControl><Input placeholder="Οδός" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address.number"
+                    render={({ field }) => (
+                      <FormItem className="w-1/4">
+                        <FormLabel>Αριθμός</FormLabel>
+                        <FormControl><Input placeholder="Αρ." {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <FormField
+                    control={form.control}
+                    name="address.postalCode"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Τ.Κ.</FormLabel>
+                        <FormControl><Input placeholder="Τ.Κ." {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address.city"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Πόλη</FormLabel>
+                        <FormControl><Input placeholder="Πόλη" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <FormField
+                    control={form.control}
+                    name="address.municipality"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Δήμος</FormLabel>
+                        <FormControl><Input placeholder="Δήμος" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address.prefecture"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Νομός</FormLabel>
+                        <FormControl><Input placeholder="Νομός" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="professional">
+              <AccordionTrigger>Επαγγελματικά Στοιχεία</AccordionTrigger>
+              <AccordionContent className="space-y-4">
+                {(watchType === "company" || watchType === "public-service") && (
+                  <FormField
+                    control={form.control}
+                    name="companyName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Επωνυμία</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Επωνυμία Εταιρείας / Υπηρεσίας" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                <FormField
+                  control={form.control}
+                  name="profession"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Επάγγελμα / Ιδιότητα</FormLabel>
+                      <FormControl>
+                        <Input placeholder="π.χ. Υδραυλικός, Δικηγόρος" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="other">
+              <AccordionTrigger>Λοιπά</AccordionTrigger>
+              <AccordionContent>
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Σημειώσεις</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Πρόσθετες σημειώσεις" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AccordionContent>
+            </AccordionItem>
           </Accordion>
-
-          <FormField
-            control={form.control}
-            name="notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Σημειώσεις</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Πρόσθετες σημειώσεις" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onCancel}>
