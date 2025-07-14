@@ -30,17 +30,16 @@ export function ProjectsChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
-          <BarChart accessibilityLayer data={mockChartData} layout="vertical" margin={{ left: 10, right: 10, top:10, bottom:10 }}>
-            <YAxis
+          <BarChart accessibilityLayer data={mockChartData} margin={{ left: 10, right: 10, top:10, bottom:10 }}>
+            <XAxis
               dataKey="name"
-              type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
               tickFormatter={(value) => value}
               className="fill-muted-foreground"
             />
-            <XAxis dataKey="value" type="number" hide />
+            <YAxis dataKey="value" type="number" hide />
             <Tooltip cursor={{ fill: "hsl(var(--muted))" }} content={<ChartTooltipContent />} />
              <Bar dataKey="value" layout="vertical" radius={5}>
             </Bar>

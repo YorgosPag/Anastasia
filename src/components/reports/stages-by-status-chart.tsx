@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from "react"
-import { Pie, PieChart, Cell } from "recharts"
+import { Pie, PieChart } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 
@@ -49,11 +49,8 @@ export function StagesByStatusChart() {
               nameKey="status"
               innerRadius={60}
               strokeWidth={5}
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
-              ))}
-            </Pie>
+              fill="hsl(var(--chart-1))"
+            />
              <ChartLegend content={<ChartLegendContent nameKey="status" />} />
           </PieChart>
         </ChartContainer>
