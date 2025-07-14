@@ -13,13 +13,21 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  const statusMap = {
-    'on-track': { text: 'Εντός Χρονοδιαγράμματος', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 border-blue-300 dark:border-blue-700' },
-    'delayed': { text: 'Σε Καθυστέρηση', className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200 border-red-300 dark:border-red-700' },
-    'completed': { text: 'Ολοκληρωμένο', className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 border-green-300 dark:border-green-700' },
+  const getStatusInfo = (status: Project['status']) => {
+    switch (status) {
+      case 'on-track':
+        return { text: 'Εντός Χρονοδιαγράμματος', className: 'border-blue-500 text-blue-500' };
+      case 'delayed':
+        return { text: 'Σε Καθυστέρηση', className: 'border-red-500 text-red-500' };
+      case 'completed':
+        return { text: 'Ολοκληρωμένο', className: 'border-green-500 text-green-500' };
+      default:
+        return { text: 'Άγνωστο', className: 'border-gray-500 text-gray-500' };
+    }
   };
+  
+  const statusInfo = getStatusInfo(project.status);
 
-  const { text, className } = statusMap[project.status];
 
   return (
     <Card className="flex flex-col">
@@ -54,7 +62,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
         
         <div className="space-y-2">
-           <Badge variant="outline" className={cn("border", className)}>{text}</Badge>
+           <Badge variant="outline" className={cn("border", statusInfo.className)}>{statusInfo.text}</Badge>
            {project.notifications > 0 && 
                 <Badge variant="destructive" className="ml-2">
                     <Bell className="mr-1 h-3 w-3" /> {project.notifications} Ειδοποιήσεις
