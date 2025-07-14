@@ -1,106 +1,54 @@
-"use client"
+import { StatCard } from '@/components/stat-card';
+import { ProjectCard } from '@/components/project-card';
+import { RecentOffers } from '@/components/recent-offers';
+import { ProjectsChart } from '@/components/projects-chart';
+import { mockStats, mockProjects } from '@/data/dashboard-data';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
-import { useState } from 'react';
-import { ContactList } from '@/components/contact-list';
-import { ContactDetails } from '@/components/contact-details';
-import { mockContacts } from '@/data/mock-data';
-import type { Contact } from '@/lib/types';
-import { useViewMode } from '@/components/providers/view-mode-provider';
-import { cn } from '@/lib/utils';
-import { ContactForm, ContactFormValues } from '@/components/contact-form';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-
-export default function ContactsPage() {
-  const [contacts, setContacts] = useState<Contact[]>(mockContacts);
-  const [selectedContactId, setSelectedContactId] = useState<string | null>(contacts[0]?.id || null);
-  const { viewMode } = useViewMode();
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingContact, setEditingContact] = useState<Contact | null>(null);
-
-  const selectedContact = contacts.find(c => c.id === selectedContactId) || null;
-  
-  const handleSelectContact = (id: string) => {
-    setSelectedContactId(id);
-  };
-  
-  const handleBack = () => {
-    setSelectedContactId(null);
-  }
-
-  const handleOpenNewForm = () => {
-    setEditingContact(null);
-    setIsFormOpen(true);
-  }
-
-  const handleOpenEditForm = (contact: Contact) => {
-    setEditingContact(contact);
-    setIsFormOpen(true);
-  }
-
-  const handleDeleteContact = (id: string) => {
-    setContacts(prev => prev.filter(c => c.id !== id));
-    if (selectedContactId === id) {
-      setSelectedContactId(contacts[0]?.id || null);
-    }
-  }
-
-  const handleSaveContact = (data: ContactFormValues) => {
-    if (editingContact) {
-      // Update existing contact
-      const updatedContact: Contact = { ...editingContact, ...data };
-      setContacts(prev => prev.map(c => c.id === editingContact.id ? updatedContact : c));
-    } else {
-      // Create new contact
-      const newContact: Contact = {
-        id: (contacts.length + 1).toString(),
-        ...data,
-        phones: [],
-        emails: [],
-        socials: [],
-      };
-      setContacts(prev => [...prev, newContact]);
-    }
-    setIsFormOpen(false);
-    setEditingContact(null);
-  };
-
-  const showDetails = viewMode === 'mobile' ? !!selectedContact : true;
-  const showList = viewMode === 'mobile' ? !selectedContact : true;
-
+export default function DashboardPage() {
   return (
-    <>
-      <div className="flex h-full">
-        <div className={cn("h-full transition-all duration-300", 
-            showList ? "w-full md:w-1/3 lg:w-1/4" : "w-0 hidden md:block"
-        )}>
-          {showList && <ContactList 
-              contacts={contacts} 
-              selectedContactId={selectedContactId} 
-              onSelectContact={handleSelectContact}
-              onNewContact={handleOpenNewForm}
-            />}
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {mockStats.map((stat) => (
+          <StatCard key={stat.title} {...stat} />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+            <ProjectsChart />
         </div>
-        
-        <div className={cn("h-full flex-grow transition-all duration-300",
-            showDetails ? "w-full md:w-2/3 lg:w-3/4" : "w-0 hidden md:block"
-        )}>
-          {showDetails && <ContactDetails 
-              contact={selectedContact} 
-              onBack={handleBack}
-              onEdit={handleOpenEditForm}
-              onDelete={handleDeleteContact}
-            />}
+        <div className="lg:col-span-1">
+            <RecentOffers />
         </div>
       </div>
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent>
-          <ContactForm
-            contact={editingContact}
-            onSubmit={handleSaveContact}
-            onCancel={() => setIsFormOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
-    </>
+
+      <div>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Πρόσφατα Ενεργά Έργα</h2>
+          <Button variant="ghost">
+            Προβολή Όλων <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {mockProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Πρόσφατες Προσφορές</h2>
+           <Button variant="ghost">
+            Προβολή Όλων <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center text-muted-foreground">
+          <p>Δεν υπάρχουν προσφορές σε εκκρεμότητα.</p>
+        </div>
+      </div>
+    </div>
   );
 }

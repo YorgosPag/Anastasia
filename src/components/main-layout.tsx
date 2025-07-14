@@ -18,7 +18,7 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
             <SidebarContent>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton tooltip="Πίνακας Ελέγχου">
+                        <SidebarMenuButton isActive tooltip="Πίνακας Ελέγχου">
                             <Grid />
                             <span className="group-data-[state=collapsed]:hidden">Πίνακας Ελέγχου</span>
                         </SidebarMenuButton>
@@ -30,7 +30,7 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton isActive tooltip="Λίστα Επαφών">
+                        <SidebarMenuButton tooltip="Λίστα Επαφών">
                             <Users />
                             <span className="group-data-[state=collapsed]:hidden">Λίστα Επαφών</span>
                         </SidebarMenuButton>
@@ -90,6 +90,7 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
             </SidebarFooter>
         </Sidebar>
         <div className="flex flex-col flex-grow">
+          <Header />
           <main className="flex-1 overflow-y-auto relative p-6">
             {children}
           </main>

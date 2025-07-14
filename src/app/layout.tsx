@@ -7,8 +7,8 @@ import { ViewModeProvider } from '@/components/providers/view-mode-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 export const metadata: Metadata = {
-  title: 'NESTOR coach',
-  description: 'Your personal contact management coach.',
+  title: 'NESTOR eco',
+  description: 'Your project management dashboard.',
 };
 
 export default function RootLayout({

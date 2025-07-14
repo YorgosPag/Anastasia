@@ -48,3 +48,20 @@ export interface Contact {
   notes?: string;
   roles: ContactRole[];
 }
+
+
+export type ProjectStatus = 'on-track' | 'delayed' | 'completed';
+
+export interface Project {
+    id: string;
+    clientName: string;
+    applicationId: string;
+    address: string;
+    projectCode: string;
+    projectName: string;
+    status: ProjectStatus;
+    progress: number;
+    deadline: string;
+    budget: number;
+    notifications: number;
+}
