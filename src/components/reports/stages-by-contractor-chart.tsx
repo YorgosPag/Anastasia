@@ -63,16 +63,10 @@ export function StagesByContractorChart() {
               cursor={false}
               content={<ChartTooltipContent indicator="dot" />}
             />
-            <Bar dataKey="stages" name="stages" radius={4}>
-                 {chartData.map((entry, index) => (
-                    <RechartsPrimitive.Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-            </Bar>
+            <Bar dataKey="stages" fill="hsl(var(--chart-1))" radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>
   )
 }
-// This needs to be imported for the chart to work
-import * as RechartsPrimitive from "recharts";

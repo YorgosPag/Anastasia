@@ -2,13 +2,13 @@
 "use client"
 
 import * as React from "react"
-import { Pie, PieChart } from "recharts"
+import { Pie, PieChart, Cell } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 
 const chartData = [
-  { status: 'pending', stages: 17, fill: 'var(--color-pending)' },
-  { status: 'in_progress', stages: 2, fill: 'var(--color-in_progress)' },
+  { status: 'pending', stages: 17, fill: 'hsl(var(--chart-1))' },
+  { status: 'in_progress', stages: 2, fill: 'hsl(var(--chart-2))' },
 ];
 
 
@@ -50,9 +50,9 @@ export function StagesByStatusChart() {
               innerRadius={60}
               strokeWidth={5}
             >
-                {chartData.map((entry) => (
-                    <RechartsPrimitive.Cell key={entry.status} fill={chartConfig[entry.status as keyof typeof chartConfig]?.color} />
-                ))}
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
             </Pie>
              <ChartLegend content={<ChartLegendContent nameKey="status" />} />
           </PieChart>
@@ -61,6 +61,3 @@ export function StagesByStatusChart() {
     </Card>
   )
 }
-
-// This needs to be imported for the chart to work
-import * as RechartsPrimitive from "recharts";
