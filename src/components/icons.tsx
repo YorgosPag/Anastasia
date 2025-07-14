@@ -1,4 +1,4 @@
-import { Globe, LucideProps, PanelLeft, Briefcase, Users, FileBarChart, Package, HelpCircle, Grid } from "lucide-react";
+import { Globe, LucideProps, PanelLeft, Briefcase, Users, FileBarChart, Package, HelpCircle, Grid, Pencil, Trash2, Plus } from "lucide-react";
 import type { SocialMedia } from "@/lib/types";
 
 export const PhoneIcon = (props: LucideProps) => (
@@ -48,6 +48,8 @@ export const ArrowLeft = (props: LucideProps) => (
 export const SidebarIcon = (props: LucideProps) => (
     <PanelLeft {...props} />
 );
+
+export { Pencil, Trash2, Plus };
 
 export const LogoIcon = (props: LucideProps) => (
   <svg

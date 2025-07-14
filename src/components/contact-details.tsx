@@ -5,15 +5,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { BrandIcons, MessageIcons, PhoneIcon, MailIcon, MapPinIcon, ArrowLeft, UsersIcon, FileTextIcon, UserIcon, HashIcon } from "@/components/icons";
+import { BrandIcons, MessageIcons, PhoneIcon, MailIcon, MapPinIcon, ArrowLeft, UsersIcon, FileTextIcon, UserIcon, HashIcon, Pencil, Trash2 } from "@/components/icons";
 import { LabelSuggester } from "./label-suggester";
 import { Button } from "./ui/button";
 import { useViewMode } from "@/components/providers/view-mode-provider";
-import { cn } from "@/lib/utils";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+
 
 interface ContactDetailsProps {
   contact: Contact | null;
   onBack?: () => void;
+  onEdit: (contact: Contact) => void;
+  onDelete: (id: string) => void;
 }
 
 const contactTypeTranslations = {
@@ -22,7 +25,7 @@ const contactTypeTranslations = {
   "public-service": "Δημόσια Υπηρεσία",
 };
 
-export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
+export function ContactDetails({ contact, onBack, onEdit, onDelete }: ContactDetailsProps) {
   const { viewMode } = useViewMode();
   
   if (!contact) {
@@ -57,18 +60,48 @@ export function ContactDetails({ contact, onBack }: ContactDetailsProps) {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="flex items-start gap-6">
-        {viewMode === 'mobile' && onBack && <Button variant="ghost" size="icon" className="md:hidden" onClick={onBack}><ArrowLeft/></Button>}
-        <Avatar className="w-20 h-20 text-3xl">
-          <AvatarImage src={contact.avatarUrl} alt={displayName} data-ai-hint="person portrait"/>
-          <AvatarFallback>{fallback}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 pt-2">
-          <h1 className="text-2xl lg:text-3xl font-bold">{displayName}</h1>
-          <p className="text-muted-foreground">{contact.profession}</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Badge variant="secondary">{contactTypeTranslations[contact.type]}</Badge>
-            {contact.roles.map(role => <Badge key={role} variant="outline">{role}</Badge>)}
-          </div>
+        <div className="flex-1 flex justify-between items-start">
+            <div className="flex items-start gap-4">
+              {viewMode === 'mobile' && onBack && <Button variant="ghost" size="icon" className="md:hidden" onClick={onBack}><ArrowLeft/></Button>}
+              <Avatar className="w-20 h-20 text-3xl">
+                <AvatarImage src={contact.avatarUrl} alt={displayName} data-ai-hint="person portrait"/>
+                <AvatarFallback>{fallback}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 pt-2">
+                <h1 className="text-2xl lg:text-3xl font-bold">{displayName}</h1>
+                <p className="text-muted-foreground">{contact.profession}</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Badge variant="secondary">{contactTypeTranslations[contact.type]}</Badge>
+                  {contact.roles.map(role => <Badge key={role} variant="outline">{role}</Badge>)}
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+                 <Button variant="outline" size="icon" onClick={() => onEdit(contact)}>
+                    <Pencil className="h-4 w-4" />
+                    <span className="sr-only">Επεξεργασία</span>
+                </Button>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="icon">
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Διαγραφή</span>
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                        <AlertDialogTitle>Είστε σίγουροι;</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει οριστικά την επαφή από τους διακομιστές μας.
+                        </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                        <AlertDialogCancel>Άκυρο</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onDelete(contact.id)}>Διαγραφή</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </div>
         </div>
       </div>
 
