@@ -1,3 +1,4 @@
+
 export type ContactType = "individual" | "company" | "public-service";
 export type ContactRole = "client" | "vendor" | "employee" | "prospect" | "lead" | "partner" | "competitor" | "personal" | "family" | "friend" | "freelancer";
 export type Gender = "male" | "female" | "other";
@@ -129,4 +130,16 @@ export interface Project {
     notifications: number;
     interventions: Intervention[];
     auditLog: AuditLogEntry[];
+}
+
+export interface CustomList {
+  id: string;
+  name: string;
+  key?: string; // Developer-defined immutable key
+}
+
+export interface CustomListItem {
+  id: string;
+  listId: string;
+  name: string;
 }

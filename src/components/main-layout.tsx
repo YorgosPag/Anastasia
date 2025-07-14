@@ -1,10 +1,11 @@
+
 "use client"
 
 import { cn } from "@/lib/utils"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarToggleButton } from "@/components/ui/sidebar"
 import { useViewMode } from "./providers/view-mode-provider"
 import { Header } from "@/components/header"
-import { BookUser, Briefcase, FileBarChart, Grid, HelpCircle, LogOut, Package, Settings, SlidersHorizontal, Users } from "lucide-react";
+import { BookUser, Briefcase, FileBarChart, Grid, HelpCircle, ListChecks, LogOut, Package, Settings, SlidersHorizontal, Users } from "lucide-react";
 import { InteractiveLogo } from "./interactive-logo"
 import { Separator } from "./ui/separator";
 import Link from "next/link";
@@ -30,7 +31,7 @@ function AppSidebar() {
             </SidebarMenuItem>
             <SidebarMenuItem>
                 <Link href="/projects" className="w-full">
-                <SidebarMenuButton isActive={pathname === '/projects'} tooltip="Λίστα Έργων">
+                <SidebarMenuButton isActive={pathname.startsWith('/projects')} tooltip="Λίστα Έργων">
                     <Briefcase />
                     <span className="group-data-[state=collapsed]:hidden">Λίστα Έργων</span>
                 </SidebarMenuButton>
@@ -70,7 +71,7 @@ function AppSidebar() {
             </SidebarMenuItem>
         </SidebarMenu>
         <Separator className="my-2" />
-          <p className="px-2 text-xs font-semibold text-muted-foreground group-data-[state=collapsed]:hidden">Διαχείριση</p>
+          <p className="px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider group-data-[state=collapsed]:hidden">Διαχείριση</p>
           <SidebarMenu>
             <SidebarMenuItem>
                 <Link href="/interventions" className="w-full">
@@ -81,10 +82,12 @@ function AppSidebar() {
                 </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Προσαρμοσμένες Λίστες">
-                    <SlidersHorizontal />
-                    <span className="group-data-[state=collapsed]:hidden">Προσαρμοσμένες Λίστες</span>
-                </SidebarMenuButton>
+                <Link href="/admin/custom-lists" className="w-full">
+                    <SidebarMenuButton isActive={pathname.startsWith('/admin/custom-lists')} tooltip="Προσαρμοσμένες Λίστες">
+                        <ListChecks />
+                        <span className="group-data-[state=collapsed]:hidden">Προσαρμοσμένες Λίστες</span>
+                    </SidebarMenuButton>
+                </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Ρυθμίσεις">
