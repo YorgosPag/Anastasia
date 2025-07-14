@@ -1,5 +1,6 @@
 export type ContactType = "individual" | "company" | "public-service";
 export type ContactRole = "client" | "vendor" | "employee" | "prospect" | "lead" | "partner" | "competitor" | "personal" | "family" | "friend" | "freelancer";
+export type Gender = "male" | "female" | "other";
 
 export interface Phone {
   id: string;
@@ -37,10 +38,22 @@ export interface Contact {
   avatarUrl?: string;
   name: string;
   surname?: string;
+  fatherName?: string;
+  motherName?: string;
+  birthDate?: string;
+  birthPlace?: string;
+  gender?: Gender;
+  nationality?: string;
   nickname?: string;
   profession?: string;
   companyName?: string;
   taxId?: string;
+  taxOffice?: string;
+  idNumber?: string;
+  idIssueDate?: string;
+  idAuthority?: string;
+  taxisUsername?: string;
+  taxisPassword?: string;
   address?: Address;
   phones: Phone[];
   emails: Email[];
