@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, MoreVertical, Bell } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { Checkbox } from './ui/checkbox';
 
 interface ProjectCardProps {
   project: Project;
@@ -13,9 +14,9 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const statusMap = {
-    'on-track': { text: 'Εντός Χρονοδιαγράμματος', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
-    'delayed': { text: 'Σε Καθυστέρηση', className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
-    'completed': { text: 'Ολοκληρωμένο', className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
+    'on-track': { text: 'Εντός Χρονοδιαγράμματος', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 border-blue-300 dark:border-blue-700' },
+    'delayed': { text: 'Σε Καθυστέρηση', className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200 border-red-300 dark:border-red-700' },
+    'completed': { text: 'Ολοκληρωμένο', className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 border-green-300 dark:border-green-700' },
   };
 
   const { text, className } = statusMap[project.status];
@@ -24,14 +25,17 @@ export function ProjectCard({ project }: ProjectCardProps) {
     <Card className="flex flex-col">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-            <div>
-              <CardDescription>{project.clientName}</CardDescription>
-              <CardDescription>Αρ. Αίτησης: {project.applicationId}</CardDescription>
-              <CardDescription>{project.address}</CardDescription>
+            <div className="flex items-start gap-2">
+              <Checkbox id={`project_${project.id}`} className="mt-1"/>
+              <div>
+                <CardDescription>{project.clientName}</CardDescription>
+                <CardDescription>Αρ. Αίτησης: {project.applicationId}</CardDescription>
+                <CardDescription>{project.address}</CardDescription>
+              </div>
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -43,11 +47,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
             </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow">
-        <h3 className="text-lg font-bold">{project.projectName}</h3>
-        <p className="text-sm font-semibold text-muted-foreground">{project.projectCode}</p>
+      <CardContent className="flex-grow space-y-4">
+        <div>
+          <h3 className="text-lg font-bold">{project.projectName}</h3>
+          <p className="text-sm font-semibold text-muted-foreground">{project.projectCode}</p>
+        </div>
         
-        <div className="mt-4 space-y-2">
+        <div className="space-y-2">
            <Badge variant="outline" className={cn("border", className)}>{text}</Badge>
            {project.notifications > 0 && 
                 <Badge variant="destructive" className="ml-2">
@@ -56,7 +62,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
            }
         </div>
 
-        <div className="mt-4">
+        <div>
             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                 <span>Πρόοδος</span>
                 <span>{project.progress}%</span>
@@ -64,7 +70,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <Progress value={project.progress} className="h-2"/>
         </div>
 
-        <div className="mt-4 flex items-center text-sm text-muted-foreground">
+        <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="mr-2 h-4 w-4" />
             <span>Προθεσμία: {project.deadline}</span>
         </div>

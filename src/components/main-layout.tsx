@@ -7,8 +7,12 @@ import { Header } from "@/components/header"
 import { BarChart2, Briefcase, FileText, Grid, HelpCircle, Settings, Users, FileBarChart, LogOut, Package, List, BookUser, SlidersHorizontal, Printer, Star } from "lucide-react";
 import { InteractiveLogo } from "./interactive-logo"
 import { Separator } from "./ui/separator";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function DesktopLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   return (
       <div className="flex h-full w-full">
         <Sidebar>
@@ -18,16 +22,20 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
             <SidebarContent>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton isActive tooltip="Πίνακας Ελέγχου">
+                      <Link href="/" className="w-full">
+                        <SidebarMenuButton isActive={pathname === '/'} tooltip="Πίνακας Ελέγχου">
                             <Grid />
                             <span className="group-data-[state=collapsed]:hidden">Πίνακας Ελέγχου</span>
                         </SidebarMenuButton>
+                      </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton tooltip="Λίστα Έργων">
+                       <Link href="/projects" className="w-full">
+                        <SidebarMenuButton isActive={pathname === '/projects'} tooltip="Λίστα Έργων">
                             <Briefcase />
                             <span className="group-data-[state=collapsed]:hidden">Λίστα Έργων</span>
                         </SidebarMenuButton>
+                       </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                         <SidebarMenuButton tooltip="Λίστα Επαφών">

@@ -5,6 +5,7 @@ import { ProjectsChart } from '@/components/projects-chart';
 import { mockStats, mockProjects } from '@/data/dashboard-data';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   return (
@@ -27,12 +28,14 @@ export default function DashboardPage() {
       <div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Πρόσφατα Ενεργά Έργα</h2>
-          <Button variant="ghost">
-            Προβολή Όλων <ArrowRight className="ml-2 h-4 w-4" />
+          <Button variant="ghost" asChild>
+            <Link href="/projects">
+              Προβολή Όλων <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {mockProjects.map((project) => (
+          {mockProjects.slice(0, 4).map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
