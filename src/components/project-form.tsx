@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useFormState } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormProvider,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -21,12 +22,15 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import type { Project } from "@/lib/types";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { mockContacts } from "@/data/mock-data";
-import { useState } from "react";
+import { getContacts } from "@/data/mock-data";
+import { useState, useEffect } from "react";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { createProjectAction, updateProjectAction } from "@/app/actions/projects";
+import { useToast } from "@/hooks/use-toast";
 
 
 const projectFormSchema = z.object({
+  id: z.string().optional(),
   projectName: z.string().min(1, "Ο τίτλος του έργου είναι υποχρεωτικός."),
   applicationId: z.string().optional(),
   clientName: z.string().min(1, "Το όνομα του πελάτη είναι υποχρεωτικός."),
@@ -37,16 +41,20 @@ const projectFormSchema = z.object({
   projectCode: z.string().optional(),
 });
 
-export type ProjectFormValues = Omit<z.infer<typeof projectFormSchema>, 'deadline'> & { deadline: string };
+export type ProjectFormValues = z.infer<typeof projectFormSchema>;
 
 interface ProjectFormProps {
   project?: Project | null;
-  onSubmit: (data: ProjectFormValues) => void;
+  onFormSubmitted: () => void;
   onCancel: () => void;
 }
 
-export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
+export function ProjectForm({ project, onFormSubmitted, onCancel }: ProjectFormProps) {
   const [popoverOpen, setPopoverOpen] = useState(false)
+  const [contactsList, setContactsList] = useState<{ value: string; label: string }[]>([]);
+  const { toast } = useToast();
+  const action = project ? updateProjectAction : createProjectAction;
+  const [state, formAction] = useFormState(action, { success: false, message: '', errors: {} });
   
   const parseDate = (dateString: string | undefined): Date | undefined => {
     if (!dateString) return undefined;
@@ -56,26 +64,52 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
     return isNaN(date.getTime()) ? undefined : date;
   }
   
-  const form = useForm<z.infer<typeof projectFormSchema>>({
+  useEffect(() => {
+    async function loadContacts() {
+        const data = await getContacts();
+        const formattedContacts = data.map(c => ({
+            value: c.type === 'company' || c.type === 'public-service' 
+            ? c.companyName || c.name
+            : `${c.name} ${c.surname || ''}`,
+            label: c.type === 'company' || c.type === 'public-service' 
+            ? `${c.companyName || c.name}`
+            : `${c.name} ${c.surname || ''}`,
+        }));
+        setContactsList(formattedContacts);
+    }
+    loadContacts();
+  }, []);
+
+  const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
+      id: project?.id,
       projectName: project?.projectName ?? "",
       applicationId: project?.applicationId ?? "",
       clientName: project?.clientName ?? "",
-      deadline: parseDate(project?.deadline),
+      deadline: project?.deadline,
       address: project?.address ?? "",
       projectCode: project?.projectCode ?? "",
     },
   });
 
-  const contacts = mockContacts.map(c => ({
-    value: c.type === 'company' || c.type === 'public-service' 
-      ? c.companyName || c.name
-      : `${c.name} ${c.surname || ''}`,
-    label: c.type === 'company' || c.type === 'public-service' 
-      ? `${c.companyName || c.name} (Χωρίς διεύθυνση)`
-      : `${c.name} ${c.surname || ''} (Χωρίς διεύθυνση)`,
-  }))
+   useEffect(() => {
+    if (state.success) {
+      toast({ title: 'Επιτυχία', description: state.message });
+      onFormSubmitted();
+    } else if (state.message) {
+      toast({ variant: 'destructive', title: 'Σφάλμα', description: state.message });
+    }
+    if (state.errors) {
+        Object.entries(state.errors).forEach(([field, errors]) => {
+            form.setError(field as keyof ProjectFormValues, {
+                type: 'manual',
+                message: (errors as string[]).join(', '),
+            });
+        });
+    }
+  }, [state, onFormSubmitted, toast, form]);
+
 
   return (
     <>
@@ -85,8 +119,9 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
           {project ? "Ενημερώστε τα βασικά στοιχεία του έργου." : "Συμπληρώστε τα στοιχεία για να δημιουργήσετε ένα νέο έργο."}
         </DialogDescription>
       </DialogHeader>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-4 pt-4">
+      <FormProvider {...form}>
+        <form action={formAction} className="space-y-4 pt-4">
+           {project && <input type="hidden" name="id" value={project.id} />}
           <FormField
             control={form.control}
             name="projectName"
@@ -131,7 +166,7 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
                         )}
                       >
                         {field.value
-                          ? contacts.find(
+                          ? contactsList.find(
                               (contact) => contact.value === field.value
                             )?.label
                           : "Επιλογή επαφής"}
@@ -145,12 +180,12 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
                       <CommandList>
                         <CommandEmpty>Δεν βρέθηκε επαφή.</CommandEmpty>
                         <CommandGroup>
-                          {contacts.map((contact) => (
+                          {contactsList.map((contact) => (
                             <CommandItem
-                              value={contact.value}
+                              value={contact.label}
                               key={contact.value}
-                              onSelect={(currentValue) => {
-                                form.setValue("clientName", currentValue)
+                              onSelect={() => {
+                                form.setValue("clientName", contact.value)
                                 setPopoverOpen(false)
                               }}
                             >
@@ -191,7 +226,7 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
                         )}
                         >
                         {field.value ? (
-                            format(field.value, "dd/MM/yyyy")
+                            format(new Date(field.value), "dd/MM/yyyy")
                         ) : (
                             <span>Επιλέξτε ημερομηνία</span>
                         )}
@@ -202,7 +237,7 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
                     <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                         mode="single"
-                        selected={field.value}
+                        selected={field.value ? new Date(field.value) : undefined}
                         onSelect={field.onChange}
                         disabled={(date) =>
                         date < new Date("1900-01-01")
@@ -223,7 +258,7 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
             <Button type="submit">Αποθήκευση</Button>
           </div>
         </form>
-      </Form>
+      </FormProvider>
     </>
   );
 }

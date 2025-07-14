@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useFormState } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormProvider,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,8 +31,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Contact } from "@/lib/types";
+import { addContactAction, updateContactAction } from "@/app/actions/contacts";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const contactFormSchema = z.object({
+  id: z.string().optional(),
   type: z.enum(["individual", "company", "public-service"], {
     required_error: "Απαιτείται τύπος επαφής.",
   }),
@@ -70,15 +75,17 @@ export type ContactFormValues = Omit<z.infer<typeof contactFormSchema>, 'birthDa
   birthDate?: string;
 };
 
-
 interface ContactFormProps {
   contact?: Contact | null;
-  onSubmit: (data: ContactFormValues) => void;
+  onFormSubmitted: () => void;
   onCancel: () => void;
 }
 
-export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
-  
+export function ContactForm({ contact, onFormSubmitted, onCancel }: ContactFormProps) {
+  const { toast } = useToast();
+  const action = contact ? updateContactAction : addContactAction;
+  const [state, formAction] = useFormState(action, { success: false, message: '', errors: {} });
+
   const parseDate = (dateString: string | undefined): Date | undefined => {
     if (!dateString) return undefined;
     const [day, month, year] = dateString.split('/');
@@ -86,12 +93,14 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
         const date = new Date(Number(year), Number(month) - 1, Number(day));
         return isNaN(date.getTime()) ? undefined : date;
     }
-    return undefined;
+    const parsedFromISO = new Date(dateString);
+    return isNaN(parsedFromISO.getTime()) ? undefined : parsedFromISO;
   }
   
   const form = useForm<z.infer<typeof contactFormSchema>>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
+      id: contact?.id,
       type: contact?.type ?? "individual",
       name: contact?.name ?? "",
       surname: contact?.surname ?? "",
@@ -119,12 +128,35 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
 
   const watchType = form.watch("type");
 
-  const handleFormSubmit = (values: z.infer<typeof contactFormSchema>) => {
-    const dataWithFormattedDate: ContactFormValues = {
-        ...values,
-        birthDate: values.birthDate instanceof Date ? format(values.birthDate, 'dd/MM/yyyy') : undefined,
-    };
-    onSubmit(dataWithFormattedDate);
+  useEffect(() => {
+    if (state.success) {
+      toast({ title: 'Επιτυχία', description: state.message });
+      onFormSubmitted();
+    } else if (state.message) {
+      toast({ variant: 'destructive', title: 'Σφάλμα', description: state.message });
+    }
+    if (state.errors) {
+        Object.entries(state.errors).forEach(([field, errors]) => {
+            form.setError(field as keyof z.infer<typeof contactFormSchema>, {
+                type: 'manual',
+                message: (errors as string[]).join(', '),
+            });
+        });
+    }
+  }, [state, onFormSubmitted, toast, form]);
+
+  const handleFormSubmit = (formData: FormData) => {
+    const values = form.getValues();
+    Object.entries(values).forEach(([key, value]) => {
+        if (value instanceof Date) {
+            formData.set(key, value.toISOString());
+        } else if (typeof value === 'object' && value !== null) {
+            Object.entries(value).forEach(([subKey, subValue]) => {
+                formData.set(`${key}.${subKey}`, subValue as string);
+            });
+        }
+    });
+    formAction(formData);
   }
 
   return (
@@ -135,8 +167,9 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
           {contact ? "Ενημερώστε τα στοιχεία της επαφής." : "Συμπληρώστε τα στοιχεία για να δημιουργήσετε μια νέα επαφή."}
         </DialogDescription>
       </DialogHeader>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4 max-h-[70vh] overflow-y-auto pr-4">
+      <FormProvider {...form}>
+        <form action={handleFormSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-4">
+           {contact && <input type="hidden" name="id" value={contact.id} />}
            <FormField
             control={form.control}
             name="type"
@@ -160,7 +193,7 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
             )}
           />
 
-          <Accordion type="multiple" defaultValue={['personal']} className="w-full">
+          <Accordion type="multiple" defaultValue={['personal', 'professional']} className="w-full">
             <AccordionItem value="personal">
               <AccordionTrigger>Προσωπικά Στοιχεία</AccordionTrigger>
               <AccordionContent className="space-y-4">
@@ -329,17 +362,41 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
                         )}
                       />
                   )}
-                  <div className="flex items-center space-x-2">
-                    <div className="flex-1 aspect-square max-w-24 border-2 border-dashed rounded-lg flex items-center justify-center text-center p-2 text-muted-foreground text-sm cursor-pointer hover:bg-accent">
-                        Μεταφέρετε ή πατήστε για ανέβασμα
-                    </div>
-                 </div>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="identity">
-              <AccordionTrigger>Στοιχεία Ταυτότητας & ΑΦΜ</AccordionTrigger>
+            
+            <AccordionItem value="professional">
+              <AccordionTrigger>Επαγγελματικά Στοιχεία</AccordionTrigger>
               <AccordionContent className="space-y-4">
+                {(watchType === "company" || watchType === "public-service") && (
                   <FormField
+                    control={form.control}
+                    name="companyName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Επωνυμία</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Επωνυμία Εταιρείας / Υπηρεσίας" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                <FormField
+                  control={form.control}
+                  name="profession"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Επάγγελμα / Ιδιότητα</FormLabel>
+                      <FormControl>
+                        <Input placeholder="π.χ. Υδραυλικός, Δικηγόρος" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
                     control={form.control}
                     name="taxId"
                     render={({ field }) => (
@@ -354,24 +411,7 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
                   />
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="taxis">
-              <AccordionTrigger>Στοιχεία Σύνδεσης Taxis</AccordionTrigger>
-               <AccordionContent>
-                  Coming soon...
-              </AccordionContent>
-            </AccordionItem>
-             <AccordionItem value="communication">
-              <AccordionTrigger>Στοιχεία Επικοινωνίας</AccordionTrigger>
-              <AccordionContent>
-                  Coming soon...
-              </AccordionContent>
-            </AccordionItem>
-             <AccordionItem value="social">
-              <AccordionTrigger>Κοινωνικά Δίκτυα</AccordionTrigger>
-              <AccordionContent>
-                  Coming soon...
-              </AccordionContent>
-            </AccordionItem>
+
             <AccordionItem value="address">
               <AccordionTrigger>Στοιχεία Διεύθυνσης</AccordionTrigger>
               <AccordionContent className="space-y-4">
@@ -423,65 +463,9 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
                     )}
                   />
                 </div>
-                <div className="flex gap-4">
-                  <FormField
-                    control={form.control}
-                    name="address.municipality"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Δήμος</FormLabel>
-                        <FormControl><Input placeholder="Δήμος" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="address.prefecture"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Νομός</FormLabel>
-                        <FormControl><Input placeholder="Νομός" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="professional">
-              <AccordionTrigger>Επαγγελματικά Στοιχεία</AccordionTrigger>
-              <AccordionContent className="space-y-4">
-                {(watchType === "company" || watchType === "public-service") && (
-                  <FormField
-                    control={form.control}
-                    name="companyName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Επωνυμία</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Επωνυμία Εταιρείας / Υπηρεσίας" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-                <FormField
-                  control={form.control}
-                  name="profession"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Επάγγελμα / Ιδιότητα</FormLabel>
-                      <FormControl>
-                        <Input placeholder="π.χ. Υδραυλικός, Δικηγόρος" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </AccordionContent>
-            </AccordionItem>
+           
             <AccordionItem value="other">
               <AccordionTrigger>Λοιπά</AccordionTrigger>
               <AccordionContent>
@@ -509,7 +493,7 @@ export function ContactForm({ contact, onSubmit, onCancel }: ContactFormProps) {
             <Button type="submit">Αποθήκευση</Button>
           </div>
         </form>
-      </Form>
+      </FormProvider>
     </>
   );
 }

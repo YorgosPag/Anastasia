@@ -2,11 +2,10 @@
 "use client";
 
 import * as React from 'react';
-import { mockContacts } from '@/data/mock-data';
 import type { Contact } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Plus, MoreHorizontal } from 'lucide-react';
+import { Search, Plus, MoreHorizontal, Trash2, Pencil } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,18 +14,45 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { ContactForm, type ContactFormValues } from '@/components/contact-form';
+import { ContactForm } from '@/components/contact-form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Pencil } from 'lucide-react';
+import { getContacts as getContactsData } from '@/data/mock-data'; // Using mock data for now
+import { deleteContactAction } from '../actions/contacts';
+import { useToast } from '@/hooks/use-toast';
+import { useFormState } from 'react-dom';
 
 export default function ContactsPage() {
-  const [contacts, setContacts] = React.useState<Contact[]>(mockContacts);
+  const [contacts, setContacts] = React.useState<Contact[]>([]);
+  const [filteredContacts, setFilteredContacts] = React.useState<Contact[]>([]);
   const [selectedContact, setSelectedContact] = React.useState<Contact | null>(null);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = React.useState(false);
   const [contactToDelete, setContactToDelete] = React.useState<Contact | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const { toast } = useToast();
+
+  const [deleteState, deleteFormAction] = useFormState(deleteContactAction, { success: false, message: '' });
+
+  React.useEffect(() => {
+    async function loadContacts() {
+      const data = await getContactsData();
+      setContacts(data);
+      setFilteredContacts(data);
+    }
+    loadContacts();
+  }, []);
+
+  React.useEffect(() => {
+    const results = contacts.filter(contact => {
+      const name = getContactDisplayName(contact).toLowerCase();
+      const profession = contact.profession?.toLowerCase() || '';
+      const email = contact.emails.find(e => e.address.toLowerCase().includes(searchTerm.toLowerCase()));
+      return name.includes(searchTerm.toLowerCase()) || profession.includes(searchTerm.toLowerCase()) || !!email;
+    });
+    setFilteredContacts(results);
+  }, [searchTerm, contacts]);
 
   const handleNewContact = () => {
     setSelectedContact(null);
@@ -45,33 +71,39 @@ export default function ContactsPage() {
 
   const handleDeleteContact = () => {
     if (contactToDelete) {
-      setContacts(contacts.filter(p => p.id !== contactToDelete.id));
-      setContactToDelete(null);
+      const formData = new FormData();
+      formData.append('id', contactToDelete.id);
+      deleteFormAction(formData);
+      setContactToDelete(null); // Optimistic UI update
     }
     setIsDeleteAlertOpen(false);
   };
-  
-  const handleFormSubmit = (data: ContactFormValues) => {
-    if (selectedContact) {
-      setContacts(contacts.map(c => c.id === selectedContact.id ? { ...c, ...data, id: c.id, phones: c.phones, emails: c.emails, socials: c.socials } : c));
-    } else {
-      const newContact: Contact = {
-        ...data,
-        id: (contacts.length + 1).toString(),
-        phones: [],
-        emails: [],
-        socials: [],
-        roles: data.roles || [],
-      };
-      setContacts([newContact, ...contacts]);
+
+  React.useEffect(() => {
+    if (deleteState.success) {
+      toast({ title: "Επιτυχία", description: deleteState.message });
+      // Optimistic update handled by revalidatePath, but we can force a client refresh
+      getContactsData().then(data => {
+        setContacts(data);
+        setFilteredContacts(data);
+      });
+    } else if (deleteState.message) {
+      toast({ variant: 'destructive', title: "Σφάλμα", description: deleteState.message });
     }
+  }, [deleteState, toast]);
+
+  const handleFormSubmitted = () => {
     setIsFormOpen(false);
-    setSelectedContact(null);
-  };
+    // Re-fetch data
+    getContactsData().then(data => {
+      setContacts(data);
+      setFilteredContacts(data);
+    });
+  }
 
   const getContactDisplayName = (contact: Contact) => {
     if (contact.type === 'company' || contact.type === 'public-service') {
-        return contact.companyName || contact.name || 'Άγνωστη Εταιρεία';
+        return contact.companyName || 'Άγνωστη Εταιρεία';
     }
     return `${contact.name || ''} ${contact.surname || ''}`.trim();
   }
@@ -97,7 +129,7 @@ export default function ContactsPage() {
 
         <DialogContent className="sm:max-w-2xl">
            <ContactForm 
-              onSubmit={handleFormSubmit}
+              onFormSubmitted={handleFormSubmitted}
               onCancel={() => setIsFormOpen(false)}
               contact={selectedContact}
             />
@@ -124,6 +156,8 @@ export default function ContactsPage() {
         <Input
           placeholder="Αναζήτηση επαφής..."
           className="pl-9"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
@@ -139,7 +173,7 @@ export default function ContactsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {contacts.map((contact) => (
+            {filteredContacts.map((contact) => (
               <TableRow key={contact.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">

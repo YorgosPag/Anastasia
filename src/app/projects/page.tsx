@@ -1,7 +1,7 @@
+
 "use client";
 
 import * as React from 'react';
-import { mockProjects } from '@/data/dashboard-data';
 import type { Project } from '@/lib/types';
 import { ProjectCard } from '@/components/project-card';
 import { Button } from '@/components/ui/button';
@@ -16,18 +16,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { ProjectForm, type ProjectFormValues } from '@/components/project-form';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { ProjectForm } from '@/components/project-form';
+import { getAllProjects as getAllProjectsData, deleteProject as deleteProjectData } from '@/data/mock-data'; // Using mock data for now
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = React.useState<Project[]>(mockProjects);
+  const [projects, setProjects] = React.useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    async function loadProjects() {
+        const data = await getAllProjectsData();
+        setProjects(data);
+    }
+    loadProjects();
+  }, []);
+
   const tabs = [
     { value: 'all', label: 'Όλα', count: projects.length },
-    { value: 'offer', label: 'Σε Προσφορά', count: 0 },
+    { value: 'offer', label: 'Σε Προσφορά', count: projects.filter(p => p.status === 'quotation').length },
     { value: 'on-track', label: 'Εντός', count: projects.filter(p => p.status === 'on-track').length },
     { value: 'delayed', label: 'Καθυστέρηση', count: projects.filter(p => p.status === 'delayed').length },
     { value: 'completed', label: 'Ολοκληρωμένα', count: projects.filter(p => p.status === 'completed').length },
@@ -43,29 +51,17 @@ export default function ProjectsPage() {
     setIsFormOpen(true);
   };
 
-  const handleDeleteProject = (projectId: string) => {
-    setProjects(projects.filter(p => p.id !== projectId));
+  const handleDeleteProject = async (projectId: string) => {
+    await deleteProjectData(projectId);
+    const updatedProjects = await getAllProjectsData();
+    setProjects(updatedProjects);
   };
-  
-  const handleFormSubmit = (data: ProjectFormValues) => {
-    if (selectedProject) {
-      // Update
-      setProjects(projects.map(p => p.id === selectedProject.id ? { ...p, ...data } : p));
-    } else {
-      // Create
-      const newProject: Project = {
-        ...data,
-        id: (projects.length + 1).toString(),
-        status: 'on-track',
-        progress: 0,
-        notifications: 0,
-        budget: 0, // Should be part of form
-      };
-      setProjects([newProject, ...projects]);
-    }
+
+  const onFormSubmitted = async () => {
     setIsFormOpen(false);
-    setSelectedProject(null);
-  };
+    const updatedProjects = await getAllProjectsData();
+    setProjects(updatedProjects);
+  }
 
   return (
     <div className="space-y-6">
@@ -83,7 +79,7 @@ export default function ProjectsPage() {
 
         <DialogContent className="sm:max-w-md">
            <ProjectForm 
-              onSubmit={handleFormSubmit}
+              onFormSubmitted={onFormSubmitted}
               onCancel={() => setIsFormOpen(false)}
               project={selectedProject}
             />
@@ -123,18 +119,21 @@ export default function ProjectsPage() {
             </TabsTrigger>
           ))}
         </TabsList>
-        <TabsContent value="all" className="mt-6">
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {projects.map((project) => (
-                <ProjectCard 
-                  key={project.id} 
-                  project={project}
-                  onEdit={() => handleEditProject(project)}
-                  onDelete={() => handleDeleteProject(project.id)}
-                />
-            ))}
-            </div>
-        </TabsContent>
+
+        {tabs.map(tab => (
+           <TabsContent key={tab.value} value={tab.value} className="mt-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {(tab.value === 'all' ? projects : projects.filter(p => p.status === tab.value)).map((project) => (
+                  <ProjectCard 
+                    key={project.id} 
+                    project={project}
+                    onEdit={() => handleEditProject(project)}
+                    onDelete={() => handleDeleteProject(project.id)}
+                  />
+              ))}
+              </div>
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   );
