@@ -5,7 +5,12 @@ import * as React from "react"
 import { Pie, PieChart } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
-import { mockStagesByStatus } from "@/data/reports-data"
+
+const chartData = [
+  { status: 'pending', stages: 17, fill: 'var(--color-pending)' },
+  { status: 'in_progress', stages: 2, fill: 'var(--color-in_progress)' },
+];
+
 
 const chartConfig = {
   stages: {
@@ -39,13 +44,13 @@ export function StagesByStatusChart() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={mockStagesByStatus}
+              data={chartData}
               dataKey="stages"
               nameKey="status"
               innerRadius={60}
               strokeWidth={5}
             >
-                {mockStagesByStatus.map((entry) => (
+                {chartData.map((entry) => (
                     <RechartsPrimitive.Cell key={entry.status} fill={chartConfig[entry.status as keyof typeof chartConfig]?.color} />
                 ))}
             </Pie>

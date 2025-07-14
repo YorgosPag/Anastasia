@@ -1,3 +1,4 @@
+
 export type ContactType = "individual" | "company" | "public-service";
 export type ContactRole = "client" | "vendor" | "employee" | "prospect" | "lead" | "partner" | "competitor" | "personal" | "family" | "friend" | "freelancer";
 export type Gender = "male" | "female" | "other";
@@ -24,10 +25,10 @@ export interface SocialMedia {
 }
 
 export interface Address {
-  street: string;
-  number: string;
-  postalCode: string;
-  city: string;
+  street?: string;
+  number?: string;
+  postalCode?: string;
+  city?: string;
   municipality?: string;
   prefecture?: string;
 }

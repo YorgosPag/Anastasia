@@ -4,21 +4,26 @@
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { mockStagesByContractor } from "@/data/reports-data"
+
+const chartData = [
+  { name: 'Γεώργιος Δολμές', stages: 24, fill: 'var(--color-dolmes)' },
+  { name: 'Ανδρέας Λαρίν', stages: 2, fill: 'var(--color-larin)' },
+  { name: 'Αθανάσιος Γκαϊτατζής', stages: 1, fill: 'var(--color-gkaitatzis)' },
+];
 
 const chartConfig = {
   stages: {
     label: "Στάδια",
   },
-  'Γεώργιος Δολμές': {
+  dolmes: {
     label: 'Γεώργιος Δολμές',
     color: 'hsl(var(--chart-1))',
   },
-  'Ανδρέας Λαρίν': {
+  larin: {
     label: 'Ανδρέας Λαρίν',
     color: 'hsl(var(--chart-2))',
   },
-  'Αθανάσιος Γκαϊτατζής': {
+  gkaitatzis: {
     label: 'Αθανάσιος Γκαϊτατζής',
     color: 'hsl(var(--chart-3))',
   },
@@ -35,7 +40,7 @@ export function StagesByContractorChart() {
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
           <BarChart
             accessibilityLayer
-            data={mockStagesByContractor}
+            data={chartData}
             margin={{
               top: 5,
               right: 20,
@@ -50,7 +55,7 @@ export function StagesByContractorChart() {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value}
+              tickFormatter={(value) => value.split(' ')[0]}
               
             />
              <YAxis />
@@ -59,8 +64,8 @@ export function StagesByContractorChart() {
               content={<ChartTooltipContent indicator="dot" />}
             />
             <Bar dataKey="stages" name="stages" radius={4}>
-                 {mockStagesByContractor.map((entry) => (
-                    <RechartsPrimitive.Cell key={entry.name} fill={chartConfig[entry.name as keyof typeof chartConfig]?.color} />
+                 {chartData.map((entry, index) => (
+                    <RechartsPrimitive.Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
             </Bar>
           </BarChart>
