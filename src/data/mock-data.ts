@@ -97,4 +97,84 @@ export const mockContacts: Contact[] = [
     notes: "Δημόσια Οικονομική Υπηρεσία.",
     roles: ["vendor"],
   },
+  {
+    id: "5",
+    type: "individual",
+    name: "Κωνσταντίνος",
+    surname: "Αγγέλου",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  },
+   {
+    id: "6",
+    type: "individual",
+    name: "Ευάγγελος",
+    surname: "Αχτσιόγλου",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  },
+  {
+    id: "7",
+    type: "individual",
+    name: "Ανατολή (Εύα)",
+    surname: "Καραγιάννη",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  },
+  {
+    id: "8",
+    type: "individual",
+    name: "Κωνσταντίνος",
+    surname: "Καρανάσιος",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  },
+  {
+    id: "9",
+    type: "individual",
+    name: "Δέσποινα",
+    surname: "Καψίδου",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  },
+  {
+    id: "10",
+    type: "individual",
+    name: "Θωμάς",
+    surname: "Κουκουτζέλης",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  },
+  {
+    id: "11",
+    type: "individual",
+    name: "Γεώργιος",
+    surname: "Κυρμελίδης",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  },
+  {
+    id: "12",
+    type: "individual",
+    name: "Ειρήνη (Βασίλειος)",
+    surname: "Λαδά (Αναγνωστόπουλος)",
+    roles: ["client"],
+    phones: [],
+    emails: [],
+    socials: []
+  }
 ];

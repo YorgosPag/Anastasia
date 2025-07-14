@@ -14,20 +14,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import type { Project } from "@/lib/types";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { mockContacts } from "@/data/mock-data";
+import { useState } from "react";
+import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+
 
 const projectFormSchema = z.object({
   projectName: z.string().min(1, "Ο τίτλος του έργου είναι υποχρεωτικός."),
@@ -49,6 +46,8 @@ interface ProjectFormProps {
 }
 
 export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
+  const [popoverOpen, setPopoverOpen] = useState(false)
+  
   const parseDate = (dateString: string | undefined): Date | undefined => {
     if (!dateString) return undefined;
     if (dateString instanceof Date) return dateString;
@@ -68,6 +67,15 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
       projectCode: project?.projectCode ?? "",
     },
   });
+
+  const contacts = mockContacts.map(c => ({
+    value: c.type === 'company' || c.type === 'public-service' 
+      ? c.companyName || c.name
+      : `${c.name} ${c.surname || ''}`,
+    label: c.type === 'company' || c.type === 'public-service' 
+      ? `${c.companyName || c.name} (Χωρίς διεύθυνση)`
+      : `${c.name} ${c.surname || ''} (Χωρίς διεύθυνση)`,
+  }))
 
   return (
     <>
@@ -109,11 +117,59 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
             control={form.control}
             name="clientName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>Ιδιοκτήτης / Ωφελούμενος</FormLabel>
-                 <FormControl>
-                  <Input placeholder="π.χ. Κωνσταντίνος Αγγέλου" {...field} />
-                </FormControl>
+                <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? contacts.find(
+                              (contact) => contact.value === field.value
+                            )?.label
+                          : "Επιλογή επαφής"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                    <Command>
+                      <CommandInput placeholder="Αναζήτηση επαφής..." />
+                      <CommandList>
+                        <CommandEmpty>Δεν βρέθηκε επαφή.</CommandEmpty>
+                        <CommandGroup>
+                          {contacts.map((contact) => (
+                            <CommandItem
+                              value={contact.value}
+                              key={contact.value}
+                              onSelect={(currentValue) => {
+                                form.setValue("clientName", currentValue)
+                                setPopoverOpen(false)
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  contact.value === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {contact.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}

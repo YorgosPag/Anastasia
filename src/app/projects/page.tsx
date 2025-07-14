@@ -81,7 +81,7 @@ export default function ProjectsPage() {
           </Button>
         </div>
 
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-md">
            <ProjectForm 
               onSubmit={handleFormSubmit}
               onCancel={() => setIsFormOpen(false)}
