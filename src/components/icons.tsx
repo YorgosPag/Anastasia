@@ -1,4 +1,4 @@
-import { Globe, LucideProps, PanelLeft } from "lucide-react";
+import { Globe, LucideProps, PanelLeft, Briefcase, Users, FileBarChart, Package, HelpCircle, Grid } from "lucide-react";
 import type { SocialMedia } from "@/lib/types";
 
 export const PhoneIcon = (props: LucideProps) => (
@@ -26,9 +26,7 @@ export const UserIcon = (props: LucideProps) => (
     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
   </svg>
 );
-export const UsersIcon = (props: LucideProps) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-);
+export const UsersIcon = Users;
 export const FileTextIcon = (props: LucideProps) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
 );
@@ -52,7 +50,7 @@ export const SidebarIcon = (props: LucideProps) => (
 );
 
 export const LogoIcon = (props: LucideProps) => (
-    <svg
+  <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
@@ -62,8 +60,7 @@ export const LogoIcon = (props: LucideProps) => (
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 13.9757 21.5244 15.8213 20.6924 17.4423" />
-      <path d="M12 6V12L16 16" />
+      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22V10" />
     </svg>
 );
 

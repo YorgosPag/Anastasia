@@ -1,4 +1,3 @@
-
 "use client"
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -16,10 +15,6 @@ export function Header() {
         <div className="flex items-center gap-2 md:hidden">
           <SidebarTrigger />
           <Logo />
-        </div>
-
-        {/* Desktop View: Empty space, logo is in the sidebar */}
-        <div className="hidden md:block">
         </div>
        </div>
 

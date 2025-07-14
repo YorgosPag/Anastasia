@@ -13,12 +13,11 @@ export function Logo({ className }: { className?: string }) {
         strokeLinejoin="round"
         className="h-6 w-6 text-primary"
       >
-        <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 13.9757 21.5244 15.8213 20.6924 17.4423" />
-        <path d="M12 6V12L16 16" />
+        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22V10" />
       </svg>
       <h1 className="text-xl font-bold tracking-tight text-foreground">
         <span className="uppercase">NESTOR</span>
-        <span className="font-light normal-case">coach</span>
+        <span className="font-light normal-case">eco</span>
       </h1>
     </div>
   );

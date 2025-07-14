@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Settings } from "lucide-react"
+import { LogOut, Printer, Settings } from "lucide-react"
 
 export function UserNav() {
   return (
@@ -24,16 +24,16 @@ export function UserNav() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
             <AvatarImage src="https://placehold.co/100x100.png" alt="@user" />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarFallback>N</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Χρήστης</p>
+            <p className="text-sm font-medium leading-none">Nestor</p>
             <p className="text-xs leading-none text-muted-foreground">
-              user@example.com
+              user@nestor.eco
             </p>
           </div>
         </DropdownMenuLabel>
@@ -43,7 +43,16 @@ export function UserNav() {
             <Settings className="mr-2 h-4 w-4" />
             <span>Ρυθμίσεις</span>
           </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Printer className="mr-2 h-4 w-4" />
+            <span>Εκτυπώσεις</span>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Αποσύνδεση</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
