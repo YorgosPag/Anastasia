@@ -1,10 +1,11 @@
+
 "use client"
 
 import { cn } from "@/lib/utils"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarToggleButton } from "@/components/ui/sidebar"
 import { useViewMode } from "./providers/view-mode-provider"
 import { Header } from "@/components/header"
-import { BarChart2, Briefcase, FileText, Grid, HelpCircle, Settings, Users, FileBarChart, LogOut, Package, List, BookUser, SlidersHorizontal, Printer, Star } from "lucide-react";
+import { BookUser, Briefcase, FileBarChart, Grid, HelpCircle, LogOut, Package, Settings, SlidersHorizontal, Users } from "lucide-react";
 import { InteractiveLogo } from "./interactive-logo"
 import { Separator } from "./ui/separator";
 import Link from "next/link";
@@ -38,10 +39,12 @@ function DesktopLayout({ children }: { children: React.ReactNode }) {
                        </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton tooltip="Λίστα Επαφών">
+                      <Link href="/contacts" className="w-full">
+                        <SidebarMenuButton isActive={pathname === '/contacts'} tooltip="Λίστα Επαφών">
                             <Users />
                             <span className="group-data-[state=collapsed]:hidden">Λίστα Επαφών</span>
                         </SidebarMenuButton>
+                      </Link>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                         <SidebarMenuButton tooltip="Αναφορές">
