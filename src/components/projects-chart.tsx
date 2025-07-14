@@ -1,22 +1,15 @@
 "use client"
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { ChartContainer, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
 import { mockChartData } from "@/data/dashboard-data"
 
 
 const chartConfig = {
   value: {
     label: "Προϋπολογισμός",
-  },
-  'Εντός': {
-    label: "Εντός",
     color: "hsl(var(--chart-1))",
-  },
-  'Καθυστέρηση': {
-    label: "Καθυστέρηση",
-    color: "hsl(var(--chart-2))",
   },
 } satisfies import("./ui/chart").ChartConfig;
 
@@ -41,8 +34,7 @@ export function ProjectsChart() {
             />
             <YAxis dataKey="value" type="number" hide />
             <Tooltip cursor={{ fill: "hsl(var(--muted))" }} content={<ChartTooltipContent />} />
-             <Bar dataKey="value" layout="vertical" radius={5}>
-            </Bar>
+             <Bar dataKey="value" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>

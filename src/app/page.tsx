@@ -1,3 +1,5 @@
+"use client";
+
 import { StatCard } from '@/components/stat-card';
 import { ProjectCard } from '@/components/project-card';
 import { RecentOffers } from '@/components/recent-offers';
