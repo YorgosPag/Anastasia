@@ -3,22 +3,26 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Calendar, MoreVertical, Bell } from 'lucide-react';
+import { ArrowRight, Calendar, MoreVertical, Bell, Pencil, Trash2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { Checkbox } from './ui/checkbox';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
+
 
 interface ProjectCardProps {
   project: Project;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
   const getStatusInfo = (status: Project['status']) => {
     switch (status) {
       case 'on-track':
         return { text: 'Εντός Χρονοδιαγράμματος', className: 'border-blue-500 text-blue-500' };
       case 'delayed':
-        return { text: 'Σε Καθυστέρηση', className: 'border-red-500 text-red-500' };
+        return { text: 'Σε Καθυστέρηση', className: 'border-destructive text-destructive' };
       case 'completed':
         return { text: 'Ολοκληρωμένο', className: 'border-green-500 text-green-500' };
       default:
@@ -48,9 +52,31 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Επεξεργασία</DropdownMenuItem>
+                    <DropdownMenuItem onClick={onEdit}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Επεξεργασία
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Αρχειοθέτηση</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">Διαγραφή</DropdownMenuItem>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Διαγραφή
+                        </DropdownMenuItem>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Είστε σίγουροι;</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει οριστικά το έργο.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Άκυρο</AlertDialogCancel>
+                          <AlertDialogAction onClick={onDelete} className="bg-destructive hover:bg-destructive/90">Διαγραφή</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
@@ -62,7 +88,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
         
         <div className="space-y-2">
-           <Badge variant="outline" className={cn("border", statusInfo.className)}>{statusInfo.text}</Badge>
+           <Badge variant="outline" className={cn(statusInfo.className)}>{statusInfo.text}</Badge>
            {project.notifications > 0 && 
                 <Badge variant="destructive" className="ml-2">
                     <Bell className="mr-1 h-3 w-3" /> {project.notifications} Ειδοποιήσεις
