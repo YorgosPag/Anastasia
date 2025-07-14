@@ -63,20 +63,40 @@ export interface Contact {
 }
 
 
-export type ProjectStatus = 'on-track' | 'delayed' | 'completed';
+export type ProjectStatus = 'on-track' | 'delayed' | 'completed' | 'quotation'; // Added 'quotation'
+export type StageStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
 
-export interface Project {
+export interface User {
     id: string;
-    clientName: string;
-    applicationId: string;
-    address: string;
-    projectCode: string;
-    projectName: string;
-    status: ProjectStatus;
-    progress: number;
+    name: string;
+    avatarUrl: string;
+}
+
+export interface AuditLogEntry {
+    id: string;
+    user: User;
+    action: string;
+    timestamp: string;
+    details: string;
+}
+
+export interface Attachment {
+    id: string;
+    name: string;
+    url: string;
+    uploadedAt: string;
+}
+
+export interface Stage {
+    id: string;
+    title: string;
+    status: StageStatus;
     deadline: string;
-    budget: number;
-    notifications: number;
+    lastUpdated: string;
+    files: Attachment[];
+    notes?: string;
+    assigneeContactId?: string;
+    supervisorContactId?: string;
 }
 
 export interface Intervention {
@@ -90,4 +110,23 @@ export interface Intervention {
   maxCostPerUnit: number;
   maxAmount: number;
   subCategory: string;
+  interventionCategory: string;
+  interventionSubcategory: string;
+  stages: Stage[];
+}
+
+export interface Project {
+    id: string;
+    clientName: string;
+    applicationId: string;
+    address: string;
+    projectCode: string;
+    projectName: string;
+    status: ProjectStatus;
+    progress: number;
+    deadline: string;
+    budget: number;
+    notifications: number;
+    interventions: Intervention[];
+    auditLog: AuditLogEntry[];
 }

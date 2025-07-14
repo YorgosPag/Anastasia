@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -8,65 +7,33 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Copy, HardDriveDownload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
-import { mockContacts } from '@/data/mock-data';
-import type { Contact } from '@/lib/types';
+import { exportContactsToMarkdownAction } from '@/app/actions/contacts';
+import { exportProjectsToMarkdownAction } from '@/app/actions/projects';
 
-function toMarkdown(contacts: Contact[]): string {
-    let markdown = '# Λίστα Επαφών\n\n';
-    markdown += 'Ακολουθούν τα αναλυτικά στοιχεία για όλες τις επαφές που είναι καταχωρημένες στο σύστημα.\n\n---\n\n';
-
-    contacts.forEach((contact, index) => {
-        const fullName = `${contact.name || ''} ${contact.surname || ''}`.trim() || contact.companyName || 'Επαφή χωρίς όνομα';
-        markdown += `### ${index + 1}. ${fullName}\n`;
-        if (contact.companyName && contact.type !== 'company') markdown += `- **Εταιρεία:** ${contact.companyName}\n`;
-        if (contact.profession) markdown += `- **Επάγγελμα/Ιδιότητα:** ${contact.profession}\n`;
-        
-        contact.emails.forEach(e => {
-            markdown += `- **Email (${e.label}):** ${e.address}\n`;
-        });
-        contact.phones.forEach(p => {
-            markdown += `- **Τηλέφωνο (${p.label}):** ${p.number}\n`;
-        });
-        
-        const addressParts = [
-            contact.address?.street,
-            contact.address?.number,
-            contact.address?.postalCode,
-            contact.address?.city,
-        ];
-        const fullAddress = addressParts.filter(Boolean).join(' ');
-        if (fullAddress) markdown += `- **Διεύθυνση:** ${fullAddress}\n`;
-
-        if (contact.taxId) markdown += `- **ΑΦΜ:** ${contact.taxId}\n`;
-        
-        if (contact.notes) markdown += `- **Σημειώσεις:** ${contact.notes}\n`;
-
-        markdown += `\n---\n\n`;
-    });
-
-    return markdown;
-}
-
+type ExportType = 'contacts' | 'projects';
 
 export function DataExport() {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState<ExportType | null>(null);
     const [markdownData, setMarkdownData] = useState<string | null>(null);
     const { toast } = useToast();
 
-    const handleExport = async () => {
-        setIsLoading(true);
+    const handleExport = async (type: ExportType) => {
+        setIsLoading(type);
         setMarkdownData(null);
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
         try {
-            const data = toMarkdown(mockContacts);
-            setMarkdownData(data);
-            toast({ title: 'Επιτυχία', description: 'Τα δεδομένα επαφών εξήχθησαν με επιτυχία.' });
-        } catch (error) {
-             toast({ variant: 'destructive', title: 'Σφάλμα Συστήματος', description: 'Προέκυψε ένα μη αναμενόμενο σφάλμα κατά την εξαγωγή.' });
+            const action = type === 'contacts' ? exportContactsToMarkdownAction : exportProjectsToMarkdownAction;
+            const result = await action();
+            
+            if (result.success && result.data) {
+                setMarkdownData(result.data);
+                toast({ title: 'Επιτυχία', description: `Τα δεδομένα (${type === 'contacts' ? 'επαφών' : 'έργων'}) εξήχθησαν με επιτυχία.` });
+            } else {
+                toast({ variant: 'destructive', title: 'Σφάλμα', description: result.error || 'Η εξαγωγή απέτυχε' });
+            }
+        } catch (error: any) {
+             toast({ variant: 'destructive', title: 'Σφάλμα Συστήματος', description: error.message || 'Προέκυψε ένα μη αναμενόμενο σφάλμα κατά την εξαγωγή.' });
         } finally {
-            setIsLoading(false);
+            setIsLoading(null);
         }
     };
     
@@ -87,13 +54,18 @@ export function DataExport() {
                     Εξαγωγή Δεδομένων
                 </CardTitle>
                 <CardDescription>
-                    Εξάγετε τα δεδομένα των επαφών σας σε μορφή Markdown για εύκολη αντιγραφή και χρήση.
+                    Εξάγετε τα δεδομένα σας από τη βάση δεδομένων σε μορφή Markdown για εύκολη αντιγραφή και χρήση.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="flex items-center gap-4">
-                    <Button onClick={handleExport} disabled={isLoading}>
-                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Εξαγωγή Επαφών σε Markdown'}
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <Button onClick={() => handleExport('contacts')} disabled={!!isLoading}>
+                        {isLoading === 'contacts' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Εξαγωγή Επαφών
+                    </Button>
+                     <Button onClick={() => handleExport('projects')} disabled={!!isLoading}>
+                        {isLoading === 'projects' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Εξαγωγή Έργων
                     </Button>
                     {markdownData && (
                         <Button onClick={handleCopy} variant="outline">
@@ -109,7 +81,7 @@ export function DataExport() {
                     </div>
                 )}
                 
-                {markdownData && (
+                {markdownData && !isLoading && (
                     <div>
                         <Label htmlFor="markdown-output">Αποτέλεσμα Εξαγωγής</Label>
                         <Textarea
