@@ -1,4 +1,3 @@
-
 "use client"
 
 import { cn } from "@/lib/utils"
@@ -74,10 +73,12 @@ function AppSidebar() {
           <p className="px-2 text-xs font-semibold text-muted-foreground group-data-[state=collapsed]:hidden">Διαχείριση</p>
           <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Κατάλογος Παρεμβάσεων">
-                    <BookUser />
-                    <span className="group-data-[state=collapsed]:hidden">Κατάλογος Παρεμβάσεων</span>
-                </SidebarMenuButton>
+                <Link href="/interventions" className="w-full">
+                    <SidebarMenuButton isActive={pathname === '/interventions'} tooltip="Κατάλογος Παρεμβάσεων">
+                        <BookUser />
+                        <span className="group-data-[state=collapsed]:hidden">Κατάλογος Παρεμβάσεων</span>
+                    </SidebarMenuButton>
+                </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Προσαρμοσμένες Λίστες">

@@ -1,4 +1,3 @@
-
 export type ContactType = "individual" | "company" | "public-service";
 export type ContactRole = "client" | "vendor" | "employee" | "prospect" | "lead" | "partner" | "competitor" | "personal" | "family" | "friend" | "freelancer";
 export type Gender = "male" | "female" | "other";
@@ -78,4 +77,17 @@ export interface Project {
     deadline: string;
     budget: number;
     notifications: number;
+}
+
+export interface Intervention {
+  id: string;
+  info: string;
+  energyChar: string;
+  expenseCategory: string;
+  category: string;
+  code: string;
+  unit: string;
+  maxCostPerUnit: number;
+  maxAmount: number;
+  subCategory: string;
 }
